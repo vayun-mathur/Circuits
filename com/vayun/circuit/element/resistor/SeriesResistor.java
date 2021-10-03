@@ -1,4 +1,4 @@
-package com.vayun.circuit.resistor;
+package com.vayun.circuit.element.resistor;
 
 public class SeriesResistor extends Resistor {
 
