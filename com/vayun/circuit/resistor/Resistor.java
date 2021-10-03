@@ -31,7 +31,7 @@ public class Resistor {
         return voltage;
     }
 
-    public void setVoltage(double voltage) {
+    protected void setVoltage(double voltage) {
         this.voltage = voltage;
     }
 
@@ -39,7 +39,7 @@ public class Resistor {
         return current;
     }
 
-    public void setCurrent(double current) {
+    protected void setCurrent(double current) {
         this.current = current;
     }
 }
