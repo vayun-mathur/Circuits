@@ -1,12 +1,18 @@
 package com.vayun.circuit.element;
 
+import com.vayun.circuit.Circuit;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ResistorCapacitor extends CircuitElement {
 
     private final double resistance; // measured in ohms
     private final double capacitance; // measured in farads
     private double charge; // measured in coulombs
 
-    public ResistorCapacitor(double resistance, double capacitance) {
+    public ResistorCapacitor(String name, double resistance, double capacitance) {
+        super(name);
         this.resistance = resistance;
         this.capacitance = capacitance;
     }
@@ -53,5 +59,23 @@ public class ResistorCapacitor extends CircuitElement {
 
     public String toString() {
         return super.toString() + String.format(" Q: %.2f C", charge);
+    }
+
+    @Override
+    public List<Circuit.Connection> getConnections(List<String> componentBefore, List<String> componentAfter) {
+        List<Circuit.Connection> conns = new ArrayList<>();
+        componentBefore.forEach((x)->conns.add(new Circuit.Connection(x, getName())));
+        componentAfter.forEach((x)->conns.add(new Circuit.Connection(getName(), x)));
+        return conns;
+    }
+
+    @Override
+    public List<String> getInNames() {
+        return List.of(getName());
+    }
+
+    @Override
+    public List<String> getOutNames() {
+        return List.of(getName());
     }
 }
