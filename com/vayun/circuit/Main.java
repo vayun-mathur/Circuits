@@ -1,6 +1,7 @@
 package com.vayun.circuit;
 
 import com.vayun.circuit.element.ParallelResistorCapacitor;
+import com.vayun.circuit.element.PowerSupply;
 import com.vayun.circuit.element.ResistorCapacitor;
 import com.vayun.circuit.element.SeriesResistorCapacitor;
 import com.vayun.circuit.gui.Controller;
@@ -17,7 +18,8 @@ public class Main {
         ResistorCapacitor c3 = new ResistorCapacitor("C3", 0, 0.9);
         SeriesResistorCapacitor rc1 = new SeriesResistorCapacitor(c1, r1);
         SeriesResistorCapacitor rc2 = new SeriesResistorCapacitor(new SeriesResistorCapacitor(c2, c3), r2);
-        Circuit c = new Circuit(12, new ParallelResistorCapacitor(rc1, rc2), List.of(r1, c1, r2, c2, c3));
+        ParallelResistorCapacitor cir = new ParallelResistorCapacitor(rc1, rc2);
+        Circuit c = new Circuit(new PowerSupply("B", 12), cir, List.of(r1, c1, r2, c2, c3));
         c.analyse();
         Controller.circuit = c;
         Window.run();

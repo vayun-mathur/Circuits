@@ -24,9 +24,10 @@ public class SeriesResistorCapacitor extends ResistorCapacitor {
     }
 
     public void analyseCurrent(double current) {
-        super.analyseCurrent(current);
-        rc1.analyseCurrent(getCurrent());
-        rc2.analyseCurrent(getCurrent());
+        rc1.analyseCurrent(current);
+        rc2.analyseCurrent(current);
+        setCurrent(current);
+        setVoltage(rc1.getVoltage()+rc2.getVoltage());
     }
 
     @Override

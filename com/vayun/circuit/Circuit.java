@@ -1,6 +1,8 @@
 package com.vayun.circuit;
 
 import com.vayun.circuit.element.CircuitElement;
+import com.vayun.circuit.element.ParallelResistorCapacitor;
+import com.vayun.circuit.element.PowerSupply;
 import com.vayun.circuit.element.ResistorCapacitor;
 
 import java.util.Collection;
@@ -10,27 +12,30 @@ import java.util.Map;
 
 public class Circuit {
 
-    private final double voltage;
+    private final PowerSupply supply;
 
     private final CircuitElement circuit;
 
     private final Map<String, CircuitElement> elements;
 
-    public Circuit(double voltage, CircuitElement circuit, List<CircuitElement> elements) {
-        this.voltage = voltage;
+    public Circuit(PowerSupply supply, CircuitElement circuit, List<CircuitElement> elements) {
+        this.supply = supply;
         this.circuit = circuit;
         this.elements = new HashMap<>();
         for(CircuitElement e: elements) {
             this.elements.put(e.getName(), e);
         }
+        this.elements.put(supply.getName(), supply);
     }
 
     public void analyse() {
-        this.circuit.analyseVoltage(voltage);
+        this.circuit.analyseVoltage(supply.getVoltage());
+        this.supply.analyseCurrent(this.circuit.getCurrent());
     }
 
     public void update(double dt) {
         this.circuit.update(dt);
+        this.supply.update(dt);
     }
 
     public CircuitElement getElement(String name) {
@@ -51,6 +56,6 @@ public class Circuit {
     }
 
     public List<Connection> getConnections() {
-        return circuit.getConnections(List.of("B"), List.of("B"));
+        return circuit.getConnections(supply.getInNames(), supply.getOutNames());
     }
 }

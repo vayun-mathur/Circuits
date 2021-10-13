@@ -2,6 +2,7 @@ package com.vayun.circuit.gui;
 
 import com.vayun.circuit.Circuit;
 import com.vayun.circuit.element.CircuitElement;
+import com.vayun.circuit.element.PowerSupply;
 import com.vayun.circuit.element.ResistorCapacitor;
 import javafx.animation.AnimationTimer;
 import javafx.beans.binding.DoubleBinding;
@@ -106,6 +107,9 @@ public class Controller {
                 setCapacitor((ResistorCapacitor) currSelected);
             }
         }
+        if(currSelected instanceof PowerSupply) {
+            setPowerSupply((PowerSupply)currSelected);
+        }
 
 
         try {
@@ -120,7 +124,6 @@ public class Controller {
     public void drawCircuit() {
         circuitCanvas.getChildren().clear();
         int c = 0;
-        elements_screen.put("B", createComponent("B", "#888888", "#888888", 20, 100));
         for (CircuitElement e : circuit.getElements()) {
             if (e instanceof ResistorCapacitor) {
                 if (((ResistorCapacitor) e).getResistance() != 0) {
@@ -130,8 +133,12 @@ public class Controller {
                     //Capacitor
                     elements_screen.put(e.getName(), createComponent(e.getName(), "#00ffff", "#88ffff", 50 + c * 30, 100));
                 }
-                elements_screen.get(e.getName()).setOnMouseClicked((t) -> currSelected = e);
             }
+            if(e instanceof PowerSupply)
+                // Battery
+                elements_screen.put(e.getName(), createComponent(e.getName(), "#888888", "#888888", 50 + c * 30, 100));
+
+            elements_screen.get(e.getName()).setOnMouseClicked((t) -> currSelected = e);
             c++;
         }
         circuitCanvas.getChildren().addAll(elements_screen.values());
@@ -256,5 +263,14 @@ public class Controller {
         resistorVoltage.setText(String.format("Voltage: %.3fV", r.getVoltage()));
         resistorCurrent.setText(String.format("Current: %.3fA", r.getCurrent()));
         rotation = elements_screen.get(r.getName()).rotateProperty();
+    }
+
+    private void setPowerSupply(PowerSupply p) {
+        resistorPane.setVisible(true);
+        capacitorPane.setVisible(false);
+        resistorName.setText("Component: " + p.getName());
+        resistorVoltage.setText(String.format("Voltage: %.3fV", p.getVoltage()));
+        resistorCurrent.setText(String.format("Current: %.3fA", p.getCurrent()));
+        rotation = elements_screen.get(p.getName()).rotateProperty();
     }
 }
