@@ -19,7 +19,7 @@ public class ResistorCapacitor extends CircuitElement {
 
     // Does not work if resistance is zero
     @Override
-    public void analyseVoltage(double voltage) {
+    public void analyseVoltage(double voltage) throws Exception {
         this.setVoltage(voltage);
 
         double vc = capacitance==0?0:charge / capacitance;
@@ -28,7 +28,7 @@ public class ResistorCapacitor extends CircuitElement {
     }
 
     @Override
-    public void analyseCurrent(double current) {
+    public void analyseCurrent(double current) throws Exception {
         this.setCurrent(current);
 
         double vr = current * resistance;

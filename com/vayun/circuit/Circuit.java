@@ -28,7 +28,7 @@ public class Circuit {
         this.elements.put(supply.getName(), supply);
     }
 
-    public void analyse() {
+    public void analyse() throws Exception {
         this.circuit.analyseVoltage(supply.getVoltage());
         this.supply.analyseCurrent(this.circuit.getCurrent());
     }

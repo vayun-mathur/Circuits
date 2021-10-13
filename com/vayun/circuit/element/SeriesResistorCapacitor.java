@@ -17,13 +17,13 @@ public class SeriesResistorCapacitor extends ResistorCapacitor {
         this.setCharge(0);
     }
 
-    public void analyseVoltage(double voltage) {
+    public void analyseVoltage(double voltage) throws Exception {
         super.analyseVoltage(voltage);
         rc1.analyseCurrent(getCurrent());
         rc2.analyseCurrent(getCurrent());
     }
 
-    public void analyseCurrent(double current) {
+    public void analyseCurrent(double current) throws Exception {
         rc1.analyseCurrent(current);
         rc2.analyseCurrent(current);
         setCurrent(current);
@@ -34,7 +34,7 @@ public class SeriesResistorCapacitor extends ResistorCapacitor {
     public void update(double dt) {
         rc1.update(dt);
         rc2.update(dt);
-        this.setCharge(rc1.getCharge());
+        this.setCharge(Math.max(rc1.getCharge(), rc2.getCharge()));
     }
 
     @Override

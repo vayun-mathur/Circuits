@@ -15,8 +15,8 @@ public abstract class CircuitElement {
         this.name = name;
     }
 
-    public abstract void analyseVoltage(double voltage);
-    public abstract void analyseCurrent(double current);
+    public abstract void analyseVoltage(double voltage) throws Exception;
+    public abstract void analyseCurrent(double current) throws Exception;
     public abstract void update(double dt);
 
     public double getVoltage() {

@@ -17,14 +17,14 @@ public class ParallelResistorCapacitor extends ResistorCapacitor {
         this.setCharge(0);
     }
 
-    public void analyseVoltage(double voltage) {
+    public void analyseVoltage(double voltage) throws Exception {
         rc1.analyseVoltage(voltage);
         rc2.analyseVoltage(voltage);
         setVoltage(voltage);
         setCurrent(rc1.getCurrent()+rc2.getCurrent());
     }
 
-    public void analyseCurrent(double current) {
+    public void analyseCurrent(double current) throws Exception {
         super.analyseCurrent(current);
         rc1.analyseVoltage(getVoltage());
         rc2.analyseVoltage(getVoltage());
