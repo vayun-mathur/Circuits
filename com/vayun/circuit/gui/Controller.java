@@ -3,24 +3,21 @@ package com.vayun.circuit.gui;
 import com.vayun.circuit.Circuit;
 import com.vayun.circuit.element.*;
 import javafx.animation.AnimationTimer;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.value.ObservableNumberValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
+import javax.swing.text.Element;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -59,6 +56,7 @@ public class Controller {
     private VBox mainPane;
 
     private double t = 0;
+    private boolean play = true;
 
     DoubleProperty rotation;
 
@@ -85,9 +83,24 @@ public class Controller {
             for (ElementGUI p : elements_screen.values()) {
                 p.getOnKeyPressed().handle(t);
             }
+            if(t.getCode()==KeyCode.N && !play) {
+                int nNumber = 0;
+                while(elements_screen.containsKey("N"+nNumber)) nNumber++;
+                addElement(new Node("N"+nNumber));
+            }
+        });
+        mainPane.addEventFilter(KeyEvent.KEY_TYPED, event->{
+            if (event.getCharacter().equals(" ")) {
+                play = !play;
+                if(play) {
+                    circuit = createCircuit();
+                }
+            }
         });
 
         drawCircuit();
+        handle();
+        leftstatus.setText("t = 0.00 seconds");
 
         timer.start();
     }
@@ -99,9 +112,11 @@ public class Controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        circuit.update(0.02);
-        t += 0.02;
-        leftstatus.setText(String.format("t = %.2f seconds", t));
+        if(play) {
+            circuit.update(0.02);
+            t += 0.02;
+            leftstatus.setText(String.format("t = %.2f seconds", t));
+        }
 
         if (currSelected instanceof Resistor) {
             setResistor((Resistor) currSelected);
@@ -121,7 +136,41 @@ public class Controller {
         }
     }
 
+    public void addElement(CircuitElement e) {
+        if(play) return;
+        elements_screen.put(e.getName(), new ElementGUI(e.getName(), 50, 50, e, this));
+        circuitCanvas.getChildren().add(elements_screen.get(e.getName()));
+        circuit.addElement(e);
+    }
+
+    public void removeElement(String name) {
+        if(play) return;
+        while(!elements_screen.get(name).getConnections().isEmpty()) {
+            removeArrow(elements_screen.get(name).getConnections().get(0));
+        }
+        circuitCanvas.getChildren().remove(elements_screen.get(name));
+        elements_screen.remove(name);
+        currSelected = null;
+    }
+
+    public void addArrow(Arrow arrow) {
+        if(play) return;
+        arrow.getC1().getConnections().add(arrow);
+        arrow.getC2().getConnections().add(arrow);
+        arrow_screen.put(arrow.getName(), arrow);
+        circuitCanvas.getChildren().add(arrow);
+    }
+
+    public void removeArrow(Arrow arrow) {
+        if(play) return;
+        arrow.getC1().getConnections().remove(arrow);
+        arrow.getC2().getConnections().remove(arrow);
+        arrow_screen.remove(arrow.getName());
+        circuitCanvas.getChildren().remove(arrow);
+    }
+
     private final ConcurrentHashMap<String, ElementGUI> elements_screen = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Arrow> arrow_screen = new ConcurrentHashMap<>();
 
     public void drawCircuit() {
         circuitCanvas.getChildren().clear();
@@ -132,7 +181,11 @@ public class Controller {
         }
         circuitCanvas.getChildren().addAll(elements_screen.values());
         for (Circuit.Connection conn : circuit.getConnections()) {
-            circuitCanvas.getChildren().add(new Arrow(elements_screen.get(conn.component1), elements_screen.get(conn.component2)));
+            Arrow a = new Arrow(elements_screen.get(conn.component1), elements_screen.get(conn.component2));
+            arrow_screen.put(conn.component1+conn.component2, a);
+            elements_screen.get(conn.component1).getConnections().add(a);
+            elements_screen.get(conn.component2).getConnections().add(a);
+            circuitCanvas.getChildren().add(a);
         }
         elements_screen.values().forEach(ElementGUI::toFront);
     }
@@ -164,5 +217,69 @@ public class Controller {
         resistorVoltage.setText(String.format("Voltage: %.3fV", p.getVoltage()));
         resistorCurrent.setText(String.format("Current: %.3fA", p.getCurrent()));
         rotation = elements_screen.get(p.getName()).rotateProperty();
+    }
+
+    private Circuit createCircuit() {
+        return createCircuit((PowerSupply) elements_screen.get("B").getCircuitElement());
+    }
+
+    public class CircuitBuilder {
+        private List<CircuitElement> elements;
+        private PowerSupply supply;
+
+        public CircuitBuilder(List<CircuitElement> elements, PowerSupply supply) {
+            this.elements = elements;
+            this.supply = supply;
+        }
+
+        public Circuit circuit() {
+            return new Circuit(supply, circuit1(elements_screen.get(supply.getName())), elements);
+        }
+
+        private HashMap<ElementGUI, Integer> reached_count = new HashMap<>();
+
+        private Stack<ElementGUI> after_parallel = new Stack<>();
+
+        public CircuitElement circuit1(ElementGUI e) {
+            return circuit(e.getConnections().get(0).getC2());
+        }
+
+        public CircuitElement circuit(ElementGUI e) {
+            if(e.getCircuitElement() == supply) {
+                return new Node("NX");
+            }
+            reached_count.putIfAbsent(e, 0);
+            reached_count.put(e, reached_count.get(e)+1);
+            List<Arrow> out = new ArrayList<>();
+            List<Arrow> in = new ArrayList<>();
+            for(Arrow a : e.getConnections()) {
+                if(a.getC1().getName().equals(e.getName())) out.add(a);
+                else in.add(a);
+            }
+            if(reached_count.get(e) < in.size()) return e.getCircuitElement();
+            if(out.size()==1 && in.size()==1) {
+                return new SeriesResistorCapacitor((ResistorCapacitor) e.getCircuitElement(), (ResistorCapacitor) circuit(out.get(0).getC2()));
+            }
+            if(out.size() > 1 && in.size() == 1) {
+                ResistorCapacitor x = new ParallelResistorCapacitor((ResistorCapacitor) circuit(out.get(0).getC2()), (ResistorCapacitor) circuit(out.get(1).getC2()));
+                out.remove(0);
+                out.remove(0);
+                while(out.size() > 0) {
+                    x = new ParallelResistorCapacitor(x, (ResistorCapacitor) circuit(out.get(0).getC2()));
+                    out.remove(0);
+                }
+                return new SeriesResistorCapacitor(new SeriesResistorCapacitor((ResistorCapacitor) e.getCircuitElement(), x), (ResistorCapacitor) circuit(after_parallel.pop()));
+            }
+            if(out.size() == 1 && in.size() > 1) {
+                after_parallel.push(e);
+                return e.getCircuitElement();
+            }
+            return null;
+        }
+    }
+
+    private Circuit createCircuit(PowerSupply e) {
+        CircuitBuilder b = new CircuitBuilder(elements_screen.values().stream().map(ElementGUI::getCircuitElement).collect(Collectors.toList()), e);
+        return b.circuit();
     }
 }

@@ -4,7 +4,11 @@ import com.vayun.circuit.element.*;
 import javafx.beans.binding.NumberExpression;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Cursor;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -12,14 +16,24 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ElementGUI extends StackPane {
 
     private final DoubleProperty rotateWire = new SimpleDoubleProperty(0);
     private final DoubleProperty centerX = new SimpleDoubleProperty(0);
     private final DoubleProperty centerY = new SimpleDoubleProperty(0);
 
-    public ElementGUI(String name, double x, double y, CircuitElement e, Controller controller) {
+    private String name;
 
+    private CircuitElement e;
+
+    public static ElementGUI arrowStart = null;
+
+    public ElementGUI(String name, double x, double y, CircuitElement e, Controller controller) {
+        this.name = name;
+        this.e = e;
         String strokeColor = null, fillColor = null;
         double radius = 0;
         if (e instanceof Resistor) {
@@ -50,7 +64,7 @@ public class ElementGUI extends StackPane {
         setTranslateY(y);
 
         setOnKeyPressed(ke -> {
-            if(controller.currSelected.getName().equals(name)) {
+            if(controller.currSelected != null && controller.currSelected.getName().equals(name)) {
                 if (ke.getCode() == KeyCode.O) {
                     rotateWireProperty().set(rotateWireProperty().get() + 0.05);
                 } else if (ke.getCode() == KeyCode.P) {
@@ -59,10 +73,29 @@ public class ElementGUI extends StackPane {
             }
         });
 
+        final ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem item1 = new MenuItem("Delete Element");
+        item1.setOnAction(e1 -> controller.removeElement(name));
+        MenuItem item2 = new MenuItem("Add Arrow From Here");
+        item2.setOnAction(e12 -> arrowStart = ElementGUI.this);
+        MenuItem item3 = new MenuItem("Add Arrow To Here");
+        item3.setOnAction(e13 -> {
+            if(arrowStart != null) {
+                controller.addArrow(new Arrow(arrowStart, ElementGUI.this));
+                arrowStart = null;
+            }
+        });
+        contextMenu.getItems().addAll(item1, item2, item3);
+
         setOnMousePressed((t) -> {
             controller.orgSceneX = t.getSceneX();
             controller.orgSceneY = t.getSceneY();
             toFront();
+
+            if (t.isSecondaryButtonDown()) {
+                contextMenu.show(this, t.getScreenX(), t.getScreenY());
+            }
         });
         setOnMouseDragged((t) -> {
             double offsetX = t.getSceneX() - controller.orgSceneX;
@@ -96,6 +129,16 @@ public class ElementGUI extends StackPane {
         return circle;
     }
 
+    private List<Arrow> connections = new ArrayList<>();
+
+    public List<Arrow> getConnections() {
+        return connections;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public DoubleProperty rotateWireProperty() {
         return rotateWire;
     }
@@ -106,5 +149,9 @@ public class ElementGUI extends StackPane {
 
     public DoubleProperty centerYProperty() {
         return centerY;
+    }
+
+    public CircuitElement getCircuitElement() {
+        return e;
     }
 }

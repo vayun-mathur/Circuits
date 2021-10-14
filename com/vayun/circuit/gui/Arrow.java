@@ -11,7 +11,9 @@ public class Arrow extends Group {
 
     private final Line line;
 
-    public Arrow() {
+    private ElementGUI c1, c2;
+
+    private Arrow() {
         this(new Line(), new Line(), new Line());
     }
 
@@ -57,6 +59,8 @@ public class Arrow extends Group {
 
     public Arrow(ElementGUI c1, ElementGUI c2) {
         this();
+        this.c1 = c1;
+        this.c2 = c2;
 
         var angle = atan2(c2.centerYProperty().subtract(c1.centerYProperty()), c2.centerXProperty().subtract(c1.centerXProperty()));
 
@@ -75,6 +79,14 @@ public class Arrow extends Group {
         this.endYProperty().bind(c2.translateYProperty().add(c2.heightProperty().divide(2)).subtract(
                 c2.heightProperty().divide(2).multiply(sin(angle))
         ));
+    }
+
+    public ElementGUI getC1() {
+        return c1;
+    }
+
+    public ElementGUI getC2() {
+        return c2;
     }
 
     private Arrow(Line line, Line arrow1, Line arrow2) {
@@ -177,4 +189,7 @@ public class Arrow extends Group {
         return line.endYProperty();
     }
 
+    public String getName() {
+        return c1.getName()+c2.getName();
+    }
 }

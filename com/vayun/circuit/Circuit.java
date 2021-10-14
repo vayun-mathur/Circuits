@@ -5,10 +5,11 @@ import com.vayun.circuit.element.ParallelResistorCapacitor;
 import com.vayun.circuit.element.PowerSupply;
 import com.vayun.circuit.element.ResistorCapacitor;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Circuit {
 
@@ -46,6 +47,14 @@ public class Circuit {
         return elements.values();
     }
 
+    public void addElement(CircuitElement e) {
+        this.elements.put(e.getName(), e);
+    }
+
+    public void removeElement(String name) {
+        this.elements.remove(name);
+    }
+
     public static class Connection {
         public String component1, component2;
 
@@ -53,9 +62,25 @@ public class Circuit {
             this.component1 = component1;
             this.component2 = component2;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Connection that = (Connection) o;
+            return Objects.equals(component1, that.component1) &&
+                    Objects.equals(component2, that.component2);
+        }
     }
 
     public List<Connection> getConnections() {
-        return circuit.getConnections(supply.getInNames(), supply.getOutNames());
+        return circuit.getConnections(supply.getInNames(), supply.getOutNames()).stream().filter( distinctByKey(p -> p.component1+p.component2) ).collect(Collectors.toList());
+    }
+
+    //Utility function
+    public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor)
+    {
+        Map<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }
