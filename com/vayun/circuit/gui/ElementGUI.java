@@ -101,8 +101,8 @@ public class ElementGUI extends StackPane {
             double offsetX = t.getSceneX() - controller.orgSceneX;
             double offsetY = t.getSceneY() - controller.orgSceneY;
 
-            setTranslateX(getTranslateX() + offsetX);
-            setTranslateY(getTranslateY() + offsetY);
+            setRealTranslateX(getRealTranslateX() + offsetX);
+            setRealTranslateY(getRealTranslateY() + offsetY);
 
             controller.orgSceneX = t.getSceneX();
             controller.orgSceneY = t.getSceneY();
@@ -113,6 +113,9 @@ public class ElementGUI extends StackPane {
 
         centerX.bind(translateXProperty().add(widthProperty().divide(2)));
         centerY.bind(translateYProperty().add(heightProperty().divide(2)));
+
+        realTranslateX = getTranslateX();
+        realTranslateY = getTranslateY();
     }
 
     private static Text createText(String name) {
@@ -127,6 +130,24 @@ public class ElementGUI extends StackPane {
         circle.setStrokeWidth(5);
 
         return circle;
+    }
+
+    private double realTranslateX;
+    public void setRealTranslateX(double value) {
+        realTranslateX = value;
+        setTranslateX(Math.round(realTranslateX/10)*10.0);
+    }
+    public double getRealTranslateX() {
+        return realTranslateX;
+    }
+
+    private double realTranslateY;
+    public void setRealTranslateY(double value) {
+        realTranslateY = value;
+        setTranslateY(Math.round(realTranslateY/10)*10.0);
+    }
+    public double getRealTranslateY() {
+        return realTranslateY;
     }
 
     private List<Arrow> connections = new ArrayList<>();
