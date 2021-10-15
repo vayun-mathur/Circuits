@@ -28,20 +28,20 @@ public class PowerSupply extends CircuitElement {
     }
 
     @Override
-    public List<Circuit.Connection> getConnections(List<String> componentBefore, List<String> componentAfter) {
+    public List<Circuit.Connection> getConnections(List<CircuitElement> componentBefore, List<CircuitElement> componentAfter) {
         List<Circuit.Connection> conns = new ArrayList<>();
-        componentBefore.forEach((x)->conns.add(new Circuit.Connection(x, getName())));
-        componentAfter.forEach((x)->conns.add(new Circuit.Connection(getName(), x)));
+        componentBefore.forEach((x)->conns.add(new Circuit.Connection(x, this)));
+        componentAfter.forEach((x)->conns.add(new Circuit.Connection(this, x)));
         return conns;
     }
 
     @Override
-    public List<String> getInNames() {
-        return List.of(getName());
+    public List<CircuitElement> getInNames() {
+        return List.of(this);
     }
 
     @Override
-    public List<String> getOutNames() {
-        return List.of(getName());
+    public List<CircuitElement> getOutNames() {
+        return List.of(this);
     }
 }

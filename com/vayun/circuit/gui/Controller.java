@@ -63,7 +63,7 @@ public class Controller {
     public void initialize() {
         mainPane.requestFocus();
         for (CircuitElement e : circuit.getElements()) {
-            if(!(e instanceof Node))
+            if (!(e instanceof Node))
                 componentsList.getItems().add(e.getName());
         }
         componentsList.getItems().sort(String::compareTo);
@@ -83,26 +83,26 @@ public class Controller {
             for (ElementGUI p : elements_screen.values()) {
                 p.getOnKeyPressed().handle(t);
             }
-            if(t.getCode()==KeyCode.N && !play) {
+            if (t.getCode() == KeyCode.N && !play) {
                 int nNumber = 0;
-                while(elements_screen.containsKey("N"+nNumber)) nNumber++;
-                addElement(new Node("N"+nNumber));
+                while (elements_screen.containsKey("N" + nNumber)) nNumber++;
+                addElement(new Node("N" + nNumber));
             }
-            if(t.getCode()==KeyCode.C && !play) {
+            if (t.getCode() == KeyCode.C && !play) {
                 int nNumber = 0;
-                while(elements_screen.containsKey("C"+nNumber)) nNumber++;
-                addElement(new Capacitor("C"+nNumber, 1));
+                while (elements_screen.containsKey("C" + nNumber)) nNumber++;
+                addElement(new Capacitor("C" + nNumber, 1));
             }
-            if(t.getCode()==KeyCode.R && !play) {
+            if (t.getCode() == KeyCode.R && !play) {
                 int nNumber = 0;
-                while(elements_screen.containsKey("R"+nNumber)) nNumber++;
-                addElement(new Resistor("R"+nNumber, 1));
+                while (elements_screen.containsKey("R" + nNumber)) nNumber++;
+                addElement(new Resistor("R" + nNumber, 1));
             }
         });
-        mainPane.addEventFilter(KeyEvent.KEY_TYPED, event->{
+        mainPane.addEventFilter(KeyEvent.KEY_TYPED, event -> {
             if (event.getCharacter().equals(" ")) {
                 play = !play;
-                if(play) {
+                if (play) {
                     circuit = createCircuit();
                 }
             }
@@ -122,7 +122,7 @@ public class Controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(play) {
+        if (play) {
             circuit.update(0.02);
             t += 0.02;
             leftstatus.setText(String.format("t = %.2f seconds", t));
@@ -147,15 +147,15 @@ public class Controller {
     }
 
     public void addElement(CircuitElement e) {
-        if(play) return;
+        if (play) return;
         elements_screen.put(e.getName(), new ElementGUI(e.getName(), 50, 50, e, this));
         circuitCanvas.getChildren().add(elements_screen.get(e.getName()));
         circuit.addElement(e);
     }
 
     public void removeElement(String name) {
-        if(play) return;
-        while(!elements_screen.get(name).getConnections().isEmpty()) {
+        if (play) return;
+        while (!elements_screen.get(name).getConnections().isEmpty()) {
             removeArrow(elements_screen.get(name).getConnections().get(0));
         }
         circuitCanvas.getChildren().remove(elements_screen.get(name));
@@ -164,7 +164,7 @@ public class Controller {
     }
 
     public void addArrow(Arrow arrow) {
-        if(play) return;
+        if (play) return;
         arrow.getC1().getConnections().add(arrow);
         arrow.getC2().getConnections().add(arrow);
         arrow_screen.put(arrow.getName(), arrow);
@@ -172,7 +172,7 @@ public class Controller {
     }
 
     public void removeArrow(Arrow arrow) {
-        if(play) return;
+        if (play) return;
         arrow.getC1().getConnections().remove(arrow);
         arrow.getC2().getConnections().remove(arrow);
         arrow_screen.remove(arrow.getName());
@@ -191,10 +191,10 @@ public class Controller {
         }
         circuitCanvas.getChildren().addAll(elements_screen.values());
         for (Circuit.Connection conn : circuit.getConnections()) {
-            Arrow a = new Arrow(elements_screen.get(conn.component1), elements_screen.get(conn.component2));
-            arrow_screen.put(conn.component1+conn.component2, a);
-            elements_screen.get(conn.component1).getConnections().add(a);
-            elements_screen.get(conn.component2).getConnections().add(a);
+            Arrow a = new Arrow(elements_screen.get(conn.component1.getName()), elements_screen.get(conn.component2.getName()));
+            arrow_screen.put(conn.component1.getName() + conn.component2.getName(), a);
+            elements_screen.get(conn.component1.getName()).getConnections().add(a);
+            elements_screen.get(conn.component2.getName()).getConnections().add(a);
             circuitCanvas.getChildren().add(a);
         }
         elements_screen.values().forEach(ElementGUI::toFront);
@@ -233,63 +233,81 @@ public class Controller {
         return createCircuit((PowerSupply) elements_screen.get("B").getCircuitElement());
     }
 
-    public class CircuitBuilder {
+    public static class CircuitBuilder {
         private List<CircuitElement> elements;
+        private List<Circuit.Connection> connections;
         private PowerSupply supply;
 
-        public CircuitBuilder(List<CircuitElement> elements, PowerSupply supply) {
+        public CircuitBuilder(List<CircuitElement> elements, List<Circuit.Connection> connections, PowerSupply supply) {
             this.elements = elements;
+            this.connections = connections;
             this.supply = supply;
         }
 
         public Circuit circuit() {
-            return new Circuit(supply, circuit1(elements_screen.get(supply.getName())), elements);
+            elements.remove(supply);
+            simplifyCircuit();
+            return new Circuit(supply, elements.get(0), elements);
         }
 
-        private HashMap<ElementGUI, Integer> reached_count = new HashMap<>();
+        public void simplifyCircuit() {
+            while (elements.size() > 2) {
+                for (int i = 0; i < connections.size(); i++) {
+                    Circuit.Connection a = connections.get(i);
+                    if(a.component1 == supply || a.component2 == supply) continue;
 
-        private Stack<ElementGUI> after_parallel = new Stack<>();
-
-        public CircuitElement circuit1(ElementGUI e) {
-            return circuit(e.getConnections().get(0).getC2());
-        }
-
-        public CircuitElement circuit(ElementGUI e) {
-            if(e.getCircuitElement() == supply) {
-                return new Node("NX");
-            }
-            reached_count.putIfAbsent(e, 0);
-            reached_count.put(e, reached_count.get(e)+1);
-            List<Arrow> out = new ArrayList<>();
-            List<Arrow> in = new ArrayList<>();
-            for(Arrow a : e.getConnections()) {
-                if(a.getC1().getName().equals(e.getName())) out.add(a);
-                else in.add(a);
-            }
-            if(reached_count.get(e) < in.size()) return e.getCircuitElement();
-            if(out.size()==1 && in.size()==1) {
-                return new SeriesResistorCapacitor((ResistorCapacitor) e.getCircuitElement(), (ResistorCapacitor) circuit(out.get(0).getC2()));
-            }
-            if(out.size() > 1 && in.size() == 1) {
-                ResistorCapacitor x = new ParallelResistorCapacitor((ResistorCapacitor) circuit(out.get(0).getC2()), (ResistorCapacitor) circuit(out.get(1).getC2()));
-                out.remove(0);
-                out.remove(0);
-                while(out.size() > 0) {
-                    x = new ParallelResistorCapacitor(x, (ResistorCapacitor) circuit(out.get(0).getC2()));
-                    out.remove(0);
+                    List<CircuitElement> in1 = connections.stream().filter((c)-> c.component2==a.component1).map((c)->c.component1).collect(Collectors.toList());
+                    List<CircuitElement> out1 = connections.stream().filter((c)-> c.component1==a.component1).map((c)->c.component2).collect(Collectors.toList());
+                    List<CircuitElement> in2 = connections.stream().filter((c)-> c.component2==a.component2).map((c)->c.component1).collect(Collectors.toList());
+                    List<CircuitElement> out2 = connections.stream().filter((c)-> c.component1==a.component2).map((c)->c.component2).collect(Collectors.toList());
+                    if (in1.size()==1 && out1.size()==1 && in2.size()==1 && out2.size()==1) {
+                        connections.remove(i);
+                        i--;
+                        CircuitElement new_node = new SeriesResistorCapacitor((ResistorCapacitor) a.component1, (ResistorCapacitor) a.component2);
+                        //connect previous nodes to new node
+                        connections.stream().filter((c) -> c.component2 == a.component1).iterator().next().component2 = new_node;
+                        connections.stream().filter((c) -> c.component1 == a.component2).iterator().next().component1 = new_node;
+                        elements.remove(a.component1);
+                        elements.remove(a.component2);
+                        elements.add(new_node);
+                    }
                 }
-                return new SeriesResistorCapacitor(new SeriesResistorCapacitor((ResistorCapacitor) e.getCircuitElement(), x), (ResistorCapacitor) circuit(after_parallel.pop()));
+                for (int i = 0; i < elements.size(); i++) {
+                    CircuitElement a = elements.get(i);
+                    for (int j = i + 1; j < elements.size(); j++) {
+                        CircuitElement b = elements.get(j);
+                        List<CircuitElement> ain = connections.stream().filter((c)-> c.component2==a).map((c)->c.component1).collect(Collectors.toList());
+                        List<CircuitElement> aout = connections.stream().filter((c)-> c.component1==a).map((c)->c.component2).collect(Collectors.toList());
+                        List<CircuitElement> bin = connections.stream().filter((c)-> c.component2==b).map((c)->c.component1).collect(Collectors.toList());
+                        List<CircuitElement> bout = connections.stream().filter((c)-> c.component1==b).map((c)->c.component2).collect(Collectors.toList());
+                        if (ain.equals(bin) && aout.equals(bout)) {
+                            if (a instanceof Node || b instanceof Node) {
+                                connections.removeIf((c) -> c.component1 == a || c.component2 == a);
+                                elements.remove(a);
+                            } else {
+                                CircuitElement new_node = new ParallelResistorCapacitor((ResistorCapacitor) a, (ResistorCapacitor) b);
+                                connections.removeIf((c) -> c.component1 == a || c.component2 == a);
+                                var i1 = connections.stream().filter((c) -> c.component1 == b).iterator();
+                                if(i1.hasNext()) i1.next().component1 = new_node;
+                                var i2 = connections.stream().filter((c) -> c.component2 == b).iterator();
+                                if(i2.hasNext()) i2.next().component2 = new_node;
+                                elements.remove(a);
+                                elements.remove(b);
+                                elements.add(new_node);
+                            }
+                        }
+                    }
+                }
             }
-            if(out.size() == 1 && in.size() > 1) {
-                after_parallel.push(e);
-                return e.getCircuitElement();
-            }
-            return null;
         }
     }
 
     private Circuit createCircuit(PowerSupply e) {
-        CircuitBuilder b = new CircuitBuilder(elements_screen.values().stream().map(ElementGUI::getCircuitElement).collect(Collectors.toList()), e);
+        CircuitBuilder b = new CircuitBuilder(elements_screen.values().stream().map(ElementGUI::getCircuitElement)
+                .collect(Collectors.toList()),
+                arrow_screen.values().stream()
+                        .map((a) -> new Circuit.Connection(a.getC1().getCircuitElement(), a.getC2().getCircuitElement()))
+                        .collect(Collectors.toList()), e);
         return b.circuit();
     }
 }

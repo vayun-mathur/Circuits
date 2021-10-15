@@ -49,8 +49,8 @@ public abstract class CircuitElement {
         return String.format("V: %.2f V, I: %.2f A", voltage, current);
     }
 
-    public abstract List<Circuit.Connection> getConnections(List<String> componentBefore, List<String> componentAfter);
+    public abstract List<Circuit.Connection> getConnections(List<CircuitElement> componentBefore, List<CircuitElement> componentAfter);
 
-    public abstract List<String> getInNames();
-    public abstract List<String> getOutNames();
+    public abstract List<CircuitElement> getInNames();
+    public abstract List<CircuitElement> getOutNames();
 }

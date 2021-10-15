@@ -56,9 +56,9 @@ public class Circuit {
     }
 
     public static class Connection {
-        public String component1, component2;
+        public CircuitElement component1, component2;
 
-        public Connection(String component1, String component2) {
+        public Connection(CircuitElement component1, CircuitElement component2) {
             this.component1 = component1;
             this.component2 = component2;
         }
@@ -74,7 +74,7 @@ public class Circuit {
     }
 
     public List<Connection> getConnections() {
-        return circuit.getConnections(supply.getInNames(), supply.getOutNames()).stream().filter( distinctByKey(p -> p.component1+p.component2) ).collect(Collectors.toList());
+        return circuit.getConnections(supply.getInNames(), supply.getOutNames()).stream().filter( distinctByKey(p -> p.component1.getName()+p.component2.getName()) ).collect(Collectors.toList());
     }
 
     //Utility function

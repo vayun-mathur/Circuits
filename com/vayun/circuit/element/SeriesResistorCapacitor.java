@@ -38,7 +38,7 @@ public class SeriesResistorCapacitor extends ResistorCapacitor {
     }
 
     @Override
-    public List<Circuit.Connection> getConnections(List<String> componentBefore, List<String> componentAfter) {
+    public List<Circuit.Connection> getConnections(List<CircuitElement> componentBefore, List<CircuitElement> componentAfter) {
         return Stream.concat(
                     rc1.getConnections(componentBefore, rc2.getInNames()).stream(),
                     rc2.getConnections(rc1.getOutNames(), componentAfter).stream()
@@ -46,12 +46,12 @@ public class SeriesResistorCapacitor extends ResistorCapacitor {
     }
 
     @Override
-    public List<String> getInNames() {
+    public List<CircuitElement> getInNames() {
         return rc1.getInNames();
     }
 
     @Override
-    public List<String> getOutNames() {
+    public List<CircuitElement> getOutNames() {
         return rc2.getOutNames();
     }
 }

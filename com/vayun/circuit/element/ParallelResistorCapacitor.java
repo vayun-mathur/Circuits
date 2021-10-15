@@ -38,7 +38,7 @@ public class ParallelResistorCapacitor extends ResistorCapacitor {
     }
 
     @Override
-    public List<Circuit.Connection> getConnections(List<String> componentBefore, List<String> componentAfter) {
+    public List<Circuit.Connection> getConnections(List<CircuitElement> componentBefore, List<CircuitElement> componentAfter) {
         return Stream.concat(
                 rc1.getConnections(componentBefore, componentAfter).stream(),
                 rc2.getConnections(componentBefore, componentAfter).stream()
@@ -46,7 +46,7 @@ public class ParallelResistorCapacitor extends ResistorCapacitor {
     }
 
     @Override
-    public List<String> getInNames() {
+    public List<CircuitElement> getInNames() {
         return Stream.concat(
                 rc1.getInNames().stream(),
                 rc2.getInNames().stream()
@@ -54,7 +54,7 @@ public class ParallelResistorCapacitor extends ResistorCapacitor {
     }
 
     @Override
-    public List<String> getOutNames() {
+    public List<CircuitElement> getOutNames() {
         return Stream.concat(
                 rc1.getOutNames().stream(),
                 rc2.getOutNames().stream()
