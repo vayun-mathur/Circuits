@@ -56,7 +56,7 @@ public class Controller {
     private VBox mainPane;
 
     private double t = 0;
-    private boolean play = true;
+    private boolean play = false;
 
     DoubleProperty rotation;
 
@@ -71,7 +71,7 @@ public class Controller {
         componentsList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> currSelected = circuit.getElement(newValue));
 
-        currSelected = circuit.getElement("R1");
+        currSelected = circuit.getElement("B");
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -87,6 +87,16 @@ public class Controller {
                 int nNumber = 0;
                 while(elements_screen.containsKey("N"+nNumber)) nNumber++;
                 addElement(new Node("N"+nNumber));
+            }
+            if(t.getCode()==KeyCode.C && !play) {
+                int nNumber = 0;
+                while(elements_screen.containsKey("C"+nNumber)) nNumber++;
+                addElement(new Capacitor("C"+nNumber, 1));
+            }
+            if(t.getCode()==KeyCode.R && !play) {
+                int nNumber = 0;
+                while(elements_screen.containsKey("R"+nNumber)) nNumber++;
+                addElement(new Resistor("R"+nNumber, 1));
             }
         });
         mainPane.addEventFilter(KeyEvent.KEY_TYPED, event->{
