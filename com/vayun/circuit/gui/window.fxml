@@ -33,6 +33,7 @@
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -41,6 +42,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -101,17 +103,23 @@
                 <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
               </textFill>
             </Label>
-                  <Pane fx:id="resistorPane" layoutX="11.0" layoutY="41.0" prefHeight="487.0" prefWidth="200.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="41.0">
+                  <Pane fx:id="resistorPane" layoutX="11.0" layoutY="41.0" prefHeight="487.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="41.0">
                      <children>
                         <Label fx:id="resistorName" layoutX="14.0" layoutY="14.0" text="Resistor Name" />
                         <Label fx:id="resistorVoltage" layoutX="14.0" layoutY="54.0" text="Voltage: 0V" />
                         <Label fx:id="resistorCurrent" layoutX="14.0" layoutY="88.0" text="Current: 0A" />
+                        <Label fx:id="resistorResistance" layoutX="14.0" layoutY="118.0" text="Resistance: 0 ohm" />
+                        <Button layoutX="22.0" layoutY="186.0" mnemonicParsing="false" onAction="#updateResistance" prefHeight="25.0" prefWidth="149.0" text="Update Resistance" />
+                        <TextField fx:id="resistorResistanceField" layoutX="22.0" layoutY="161.0" />
                      </children></Pane>
                   <Pane fx:id="capacitorPane" prefHeight="487.0" prefWidth="200.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="41.0">
                      <children>
                         <Label fx:id="capacitorName" layoutX="14.0" layoutY="14.0" text="Capacitor Name" />
                         <Label fx:id="capacitorVoltage" layoutX="14.0" layoutY="54.0" text="Voltage: 0V" />
                         <Label fx:id="capacitorCharge" layoutX="14.0" layoutY="88.0" text="Charge: 0C" />
+                        <Label fx:id="capacitorCapacitance" layoutX="14.0" layoutY="119.0" text="Capacitance: 0F" />
+                        <Button layoutX="22.0" layoutY="187.0" mnemonicParsing="false" onAction="#updateCapacitance" prefHeight="25.0" prefWidth="149.0" text="Update Capacitance" />
+                        <TextField fx:id="capacitorCapacitanceField" layoutX="22.0" layoutY="162.0" />
                      </children>
                   </Pane>
           </children>

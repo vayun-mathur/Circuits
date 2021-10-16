@@ -108,7 +108,7 @@ public class ElementGUI extends StackPane {
             controller.orgSceneY = t.getSceneY();
         });
         if(!(e instanceof Node)) {
-            setOnMouseClicked((t) -> controller.currSelected = e);
+            setOnMouseClicked((t) -> controller.currSelected = this.e);
         }
 
         centerX.bind(translateXProperty().add(widthProperty().divide(2)));
@@ -174,5 +174,9 @@ public class ElementGUI extends StackPane {
 
     public CircuitElement getCircuitElement() {
         return e;
+    }
+
+    public void setCircuitElement(CircuitElement e) {
+        this.e = e;
     }
 }

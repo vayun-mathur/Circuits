@@ -3,19 +3,16 @@ package com.vayun.circuit.gui;
 import com.vayun.circuit.Circuit;
 import com.vayun.circuit.element.*;
 import javafx.animation.AnimationTimer;
-import javafx.beans.property.DoubleProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import javax.swing.text.Element;
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -23,7 +20,7 @@ public class Controller {
 
     public static Circuit circuit;
 
-    public volatile CircuitElement currSelected;
+    public CircuitElement currSelected;
 
     @FXML
     private Pane resistorPane;
@@ -33,6 +30,10 @@ public class Controller {
     private Label resistorVoltage;
     @FXML
     private Label resistorCurrent;
+    @FXML
+    private Label resistorResistance;
+    @FXML
+    private TextField resistorResistanceField;
 
     @FXML
     private Pane capacitorPane;
@@ -42,6 +43,10 @@ public class Controller {
     private Label capacitorVoltage;
     @FXML
     private Label capacitorCharge;
+    @FXML
+    private Label capacitorCapacitance;
+    @FXML
+    private TextField capacitorCapacitanceField;
 
     @FXML
     private ListView<String> componentsList;
@@ -57,8 +62,6 @@ public class Controller {
 
     private double t = 0;
     private boolean play = false;
-
-    DoubleProperty rotation;
 
     public void initialize() {
         mainPane.requestFocus();
@@ -208,7 +211,14 @@ public class Controller {
         capacitorName.setText("Component: " + c.getName());
         capacitorVoltage.setText(String.format("Voltage: %.3fV", c.getVoltage()));
         capacitorCharge.setText(String.format("Charge: %.3fC", c.getCharge()));
-        rotation = elements_screen.get(c.getName()).rotateProperty();
+        capacitorCapacitance.setText(String.format("Capacitance: %.3fF", c.getCapacitance()));
+    }
+
+    public void updateCapacitance() {
+        if(play) return;
+        elements_screen.get(currSelected.getName()).setCircuitElement(new Capacitor(currSelected.getName(), Double.parseDouble(capacitorCapacitanceField.getText())));
+        ((ResistorCapacitor)elements_screen.get(currSelected.getName()).getCircuitElement()).setCharge(((ResistorCapacitor)currSelected).getCharge());
+        currSelected = elements_screen.get(currSelected.getName()).getCircuitElement();
     }
 
     public void setResistor(Resistor r) {
@@ -217,7 +227,13 @@ public class Controller {
         resistorName.setText("Component: " + r.getName());
         resistorVoltage.setText(String.format("Voltage: %.3fV", r.getVoltage()));
         resistorCurrent.setText(String.format("Current: %.3fA", r.getCurrent()));
-        rotation = elements_screen.get(r.getName()).rotateProperty();
+        resistorResistance.setText(String.format("Resistance: %.3f ohms", r.getResistance()));
+    }
+
+    public void updateResistance() {
+        if(play) return;
+        elements_screen.get(currSelected.getName()).setCircuitElement(new Resistor(currSelected.getName(), Double.parseDouble(resistorResistanceField.getText())));
+        currSelected = elements_screen.get(currSelected.getName()).getCircuitElement();
     }
 
     private void setPowerSupply(PowerSupply p) {
@@ -226,7 +242,6 @@ public class Controller {
         resistorName.setText("Component: " + p.getName());
         resistorVoltage.setText(String.format("Voltage: %.3fV", p.getVoltage()));
         resistorCurrent.setText(String.format("Current: %.3fA", p.getCurrent()));
-        rotation = elements_screen.get(p.getName()).rotateProperty();
     }
 
     private Circuit createCircuit() {

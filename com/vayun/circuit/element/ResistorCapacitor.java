@@ -53,7 +53,7 @@ public class ResistorCapacitor extends CircuitElement {
         return charge;
     }
 
-    protected void setCharge(double charge) {
+    public void setCharge(double charge) {
         this.charge = charge;
     }
 
