@@ -1,11 +1,8 @@
 package com.vayun.circuit.gui;
 
 import com.vayun.circuit.element.*;
-import javafx.beans.binding.NumberExpression;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -21,11 +18,10 @@ import java.util.List;
 
 public class ElementGUI extends StackPane {
 
-    private final DoubleProperty rotateWire = new SimpleDoubleProperty(0);
     private final DoubleProperty centerX = new SimpleDoubleProperty(0);
     private final DoubleProperty centerY = new SimpleDoubleProperty(0);
 
-    private String name;
+    private final String name;
 
     private CircuitElement e;
 
@@ -66,16 +62,6 @@ public class ElementGUI extends StackPane {
         setCursor(Cursor.HAND);
         setTranslateX(x);
         setTranslateY(y);
-
-        setOnKeyPressed(ke -> {
-            if(controller.currSelected != null && controller.currSelected.getName().equals(name)) {
-                if (ke.getCode() == KeyCode.O) {
-                    rotateWireProperty().set(rotateWireProperty().get() + 0.05);
-                } else if (ke.getCode() == KeyCode.P) {
-                    rotateWireProperty().set(rotateWireProperty().get() - 0.05);
-                }
-            }
-        });
 
         final ContextMenu contextMenu = new ContextMenu();
 
@@ -154,7 +140,7 @@ public class ElementGUI extends StackPane {
         return realTranslateY;
     }
 
-    private List<Arrow> connections = new ArrayList<>();
+    private final List<Arrow> connections = new ArrayList<>();
 
     public List<Arrow> getConnections() {
         return connections;
@@ -162,10 +148,6 @@ public class ElementGUI extends StackPane {
 
     public String getName() {
         return name;
-    }
-
-    public DoubleProperty rotateWireProperty() {
-        return rotateWire;
     }
 
     public DoubleProperty centerXProperty() {
