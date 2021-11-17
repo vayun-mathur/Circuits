@@ -5,6 +5,8 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.scene.Group;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.shape.Line;
 
 public class Arrow extends Group {
@@ -57,7 +59,7 @@ public class Arrow extends Group {
         };
     }
 
-    public Arrow(ElementGUI c1, ElementGUI c2) {
+    public Arrow(ElementGUI c1, ElementGUI c2, Controller controller) {
         this();
         this.c1 = c1;
         this.c2 = c2;
@@ -79,6 +81,18 @@ public class Arrow extends Group {
         this.endYProperty().bind(c2.translateYProperty().add(c2.heightProperty().divide(2)).subtract(
                 c2.heightProperty().divide(2).multiply(sin(angle))
         ));
+
+        final ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem item1 = new MenuItem("Delete Connection");
+        item1.setOnAction(e1 -> controller.removeArrow(this));
+        contextMenu.getItems().addAll(item1);
+
+        setOnMousePressed((t) -> {
+            if (t.isSecondaryButtonDown()) {
+                contextMenu.show(this, t.getScreenX(), t.getScreenY());
+            }
+        });
     }
 
     public ElementGUI getC1() {

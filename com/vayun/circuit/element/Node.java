@@ -1,7 +1,7 @@
 package com.vayun.circuit.element;
 
-public class Node extends ResistorCapacitor {
+public class Node extends ResistorCapacitorInductor {
     public Node(String name) {
-        super(name, 0, 0);
+        super(name, 0, 0, 0);
     }
 }

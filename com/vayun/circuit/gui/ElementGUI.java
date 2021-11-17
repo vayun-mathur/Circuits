@@ -44,6 +44,10 @@ public class ElementGUI extends StackPane {
             strokeColor = "#00ffff";
             fillColor = "#88ffff";
             radius = 20;
+        } else if (e instanceof Inductor) {
+            strokeColor = "#ffff00";
+            fillColor = "#ffff88";
+            radius = 20;
         } else if (e instanceof Node) {
             strokeColor = "#000000";
             fillColor = "#000000";
@@ -82,7 +86,7 @@ public class ElementGUI extends StackPane {
         MenuItem item3 = new MenuItem("Add Arrow To Here");
         item3.setOnAction(e13 -> {
             if(arrowStart != null) {
-                controller.addArrow(new Arrow(arrowStart, ElementGUI.this));
+                controller.addArrow(new Arrow(arrowStart, ElementGUI.this, controller));
                 arrowStart = null;
             }
         });

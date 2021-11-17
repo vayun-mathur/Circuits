@@ -36,6 +36,19 @@ public class Controller {
     private TextField resistorResistanceField;
 
     @FXML
+    private Pane inductorPane;
+    @FXML
+    private Label inductorName;
+    @FXML
+    private Label inductorVoltage;
+    @FXML
+    private Label inductorCurrent;
+    @FXML
+    private Label inductorInductance;
+    @FXML
+    private TextField inductorInductanceField;
+
+    @FXML
     private Pane capacitorPane;
     @FXML
     private Label capacitorName;
@@ -101,6 +114,11 @@ public class Controller {
                 while (elements_screen.containsKey("R" + nNumber)) nNumber++;
                 addElement(new Resistor("R" + nNumber, 1));
             }
+            if (t.getCode() == KeyCode.I && !play) {
+                int nNumber = 0;
+                while (elements_screen.containsKey("I" + nNumber)) nNumber++;
+                addElement(new Inductor("I" + nNumber, 1));
+            }
         });
         mainPane.addEventFilter(KeyEvent.KEY_TYPED, event -> {
             if (event.getCharacter().equals(" ")) {
@@ -136,6 +154,9 @@ public class Controller {
         }
         if (currSelected instanceof Capacitor) {
             setCapacitor((Capacitor) currSelected);
+        }
+        if (currSelected instanceof Inductor) {
+            setInductor((Inductor) currSelected);
         }
         if (currSelected instanceof PowerSupply) {
             setPowerSupply((PowerSupply) currSelected);
@@ -194,7 +215,7 @@ public class Controller {
         }
         circuitCanvas.getChildren().addAll(elements_screen.values());
         for (Circuit.Connection conn : circuit.getConnections()) {
-            Arrow a = new Arrow(elements_screen.get(conn.component1.getName()), elements_screen.get(conn.component2.getName()));
+            Arrow a = new Arrow(elements_screen.get(conn.component1.getName()), elements_screen.get(conn.component2.getName()), this);
             arrow_screen.put(conn.component1.getName() + conn.component2.getName(), a);
             elements_screen.get(conn.component1.getName()).getConnections().add(a);
             elements_screen.get(conn.component2.getName()).getConnections().add(a);
@@ -208,6 +229,7 @@ public class Controller {
     public void setCapacitor(Capacitor c) {
         resistorPane.setVisible(false);
         capacitorPane.setVisible(true);
+        inductorPane.setVisible(false);
         capacitorName.setText("Component: " + c.getName());
         capacitorVoltage.setText(String.format("Voltage: %.3fV", c.getVoltage()));
         capacitorCharge.setText(String.format("Charge: %.3fC", c.getCharge()));
@@ -217,13 +239,14 @@ public class Controller {
     public void updateCapacitance() {
         if(play) return;
         elements_screen.get(currSelected.getName()).setCircuitElement(new Capacitor(currSelected.getName(), Double.parseDouble(capacitorCapacitanceField.getText())));
-        ((ResistorCapacitor)elements_screen.get(currSelected.getName()).getCircuitElement()).setCharge(((ResistorCapacitor)currSelected).getCharge());
+        ((ResistorCapacitorInductor)elements_screen.get(currSelected.getName()).getCircuitElement()).setCharge(((ResistorCapacitorInductor)currSelected).getCharge());
         currSelected = elements_screen.get(currSelected.getName()).getCircuitElement();
     }
 
     public void setResistor(Resistor r) {
         resistorPane.setVisible(true);
         capacitorPane.setVisible(false);
+        inductorPane.setVisible(false);
         resistorName.setText("Component: " + r.getName());
         resistorVoltage.setText(String.format("Voltage: %.3fV", r.getVoltage()));
         resistorCurrent.setText(String.format("Current: %.3fA", r.getCurrent()));
@@ -233,6 +256,22 @@ public class Controller {
     public void updateResistance() {
         if(play) return;
         elements_screen.get(currSelected.getName()).setCircuitElement(new Resistor(currSelected.getName(), Double.parseDouble(resistorResistanceField.getText())));
+        currSelected = elements_screen.get(currSelected.getName()).getCircuitElement();
+    }
+
+    public void setInductor(Inductor r) {
+        resistorPane.setVisible(false);
+        capacitorPane.setVisible(false);
+        inductorPane.setVisible(true);
+        inductorName.setText("Component: " + r.getName());
+        inductorVoltage.setText(String.format("Voltage: %.3fV", r.getVoltage()));
+        inductorCurrent.setText(String.format("Current: %.3fA", r.getCurrent()));
+        inductorInductance.setText(String.format("Inductance: %.3f H", r.getInductance()));
+    }
+
+    public void updateInductance() {
+        if(play) return;
+        elements_screen.get(currSelected.getName()).setCircuitElement(new Inductor(currSelected.getName(), Double.parseDouble(inductorInductanceField.getText())));
         currSelected = elements_screen.get(currSelected.getName()).getCircuitElement();
     }
 
@@ -278,7 +317,7 @@ public class Controller {
                     if (in1.size()==1 && out1.size()==1 && in2.size()==1 && out2.size()==1) {
                         connections.remove(i);
                         i--;
-                        CircuitElement new_node = new SeriesResistorCapacitor((ResistorCapacitor) a.component1, (ResistorCapacitor) a.component2);
+                        CircuitElement new_node = new SeriesResistorCapacitorInductor((ResistorCapacitorInductor) a.component1, (ResistorCapacitorInductor) a.component2);
                         //connect previous nodes to new node
                         connections.stream().filter((c) -> c.component2 == a.component1).iterator().next().component2 = new_node;
                         connections.stream().filter((c) -> c.component1 == a.component2).iterator().next().component1 = new_node;
@@ -300,7 +339,7 @@ public class Controller {
                                 connections.removeIf((c) -> c.component1 == a || c.component2 == a);
                                 elements.remove(a);
                             } else {
-                                CircuitElement new_node = new ParallelResistorCapacitor((ResistorCapacitor) a, (ResistorCapacitor) b);
+                                CircuitElement new_node = new ParallelResistorCapacitorInductor((ResistorCapacitorInductor) a, (ResistorCapacitorInductor) b);
                                 connections.removeIf((c) -> c.component1 == a || c.component2 == a);
                                 var i1 = connections.stream().filter((c) -> c.component1 == b).iterator();
                                 if(i1.hasNext()) i1.next().component1 = new_node;

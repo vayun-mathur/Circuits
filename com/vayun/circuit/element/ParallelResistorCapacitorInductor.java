@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ParallelResistorCapacitor extends ResistorCapacitor {
+public class ParallelResistorCapacitorInductor extends ResistorCapacitorInductor {
 
-    private final ResistorCapacitor rc1, rc2;
+    private final ResistorCapacitorInductor rc1, rc2;
 
-    public ParallelResistorCapacitor(ResistorCapacitor rc1, ResistorCapacitor rc2) {
-        super("", inverse(rc1.getResistance(), rc2.getResistance()), rc1.getCapacitance() + rc2.getCapacitance());
+    public ParallelResistorCapacitorInductor(ResistorCapacitorInductor rc1, ResistorCapacitorInductor rc2) {
+        super("", inverse(rc1.getResistance(), rc2.getResistance()), rc1.getCapacitance() + rc2.getCapacitance(), inverse(rc1.getInductance(), rc2.getInductance()));
         this.rc1 = rc1;
         this.rc2 = rc2;
         this.setCharge(0);

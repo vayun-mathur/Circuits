@@ -112,7 +112,7 @@
                         <Button layoutX="22.0" layoutY="186.0" mnemonicParsing="false" onAction="#updateResistance" prefHeight="25.0" prefWidth="149.0" text="Update Resistance" />
                         <TextField fx:id="resistorResistanceField" layoutX="22.0" layoutY="161.0" />
                      </children></Pane>
-                  <Pane fx:id="capacitorPane" prefHeight="487.0" prefWidth="200.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="41.0">
+                  <Pane fx:id="capacitorPane" prefHeight="487.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="41.0">
                      <children>
                         <Label fx:id="capacitorName" layoutX="14.0" layoutY="14.0" text="Capacitor Name" />
                         <Label fx:id="capacitorVoltage" layoutX="14.0" layoutY="54.0" text="Voltage: 0V" />
@@ -120,6 +120,16 @@
                         <Label fx:id="capacitorCapacitance" layoutX="14.0" layoutY="119.0" text="Capacitance: 0F" />
                         <Button layoutX="22.0" layoutY="187.0" mnemonicParsing="false" onAction="#updateCapacitance" prefHeight="25.0" prefWidth="149.0" text="Update Capacitance" />
                         <TextField fx:id="capacitorCapacitanceField" layoutX="22.0" layoutY="162.0" />
+                     </children>
+                  </Pane>
+                  <Pane fx:id="inductorPane" layoutX="21.0" layoutY="51.0" prefHeight="487.0" prefWidth="200.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="41.0">
+                     <children>
+                        <Label fx:id="inductorName" layoutX="14.0" layoutY="14.0" text="Inductor Name" />
+                        <Label fx:id="inductorVoltage" layoutX="14.0" layoutY="54.0" text="Voltage: 0V" />
+                        <Label fx:id="inductorCurrent" layoutX="14.0" layoutY="88.0" text="Current: 0A" />
+                        <Label fx:id="inductorInductance" layoutX="14.0" layoutY="118.0" text="Inductance: 0 H" />
+                        <Button layoutX="22.0" layoutY="186.0" mnemonicParsing="false" onAction="#updateInductance" prefHeight="25.0" prefWidth="149.0" text="Update Inductance" />
+                        <TextField fx:id="inductorInductanceField" layoutX="22.0" layoutY="161.0" />
                      </children>
                   </Pane>
           </children>
