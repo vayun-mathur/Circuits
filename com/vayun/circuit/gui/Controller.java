@@ -135,12 +135,12 @@ public class Controller {
 
     public void handle() {
 
-        try {
-            circuit.analyse();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         if (play) {
+            try {
+                circuit.analyse();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             circuit.update(0.02);
             t += 0.02;
             leftstatus.setText(String.format("t = %.2f seconds", t));
