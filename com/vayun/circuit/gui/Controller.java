@@ -96,9 +96,6 @@ public class Controller {
         };
 
         mainPane.setOnKeyPressed((t) -> {
-            for (ElementGUI p : elements_screen.values()) {
-                p.getOnKeyPressed().handle(t);
-            }
             if (t.getCode() == KeyCode.N && !play) {
                 int nNumber = 0;
                 while (elements_screen.containsKey("N" + nNumber)) nNumber++;
@@ -160,6 +157,11 @@ public class Controller {
         }
         if (currSelected instanceof PowerSupply) {
             setPowerSupply((PowerSupply) currSelected);
+        }
+        if(currSelected == null) {
+            resistorPane.setVisible(false);
+            capacitorPane.setVisible(false);
+            inductorPane.setVisible(false);
         }
 
 
@@ -278,6 +280,7 @@ public class Controller {
     private void setPowerSupply(PowerSupply p) {
         resistorPane.setVisible(true);
         capacitorPane.setVisible(false);
+        inductorPane.setVisible(false);
         resistorName.setText("Component: " + p.getName());
         resistorVoltage.setText(String.format("Voltage: %.3fV", p.getVoltage()));
         resistorCurrent.setText(String.format("Current: %.3fA", p.getCurrent()));
