@@ -34,7 +34,7 @@ public class ResistorCapacitorInductor extends CircuitElement {
     public void analyseCurrent(double current) throws Exception {
         double old_current = this.getCurrent();
         this.setCurrent(current);
-        double vi = -inductance * (current-old_current)/dt;
+        double vi = inductance * (current-old_current)/dt;
         double vr = current * resistance;
         double vc = capacitance==0?0:charge / capacitance;
         this.setVoltage(vr + vc + vi);
