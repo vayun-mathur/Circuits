@@ -122,7 +122,7 @@
                         <TextField fx:id="capacitorCapacitanceField" layoutX="22.0" layoutY="162.0" />
                      </children>
                   </Pane>
-                  <Pane fx:id="inductorPane" layoutX="21.0" layoutY="51.0" prefHeight="487.0" prefWidth="200.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="41.0">
+                  <Pane fx:id="inductorPane" layoutX="21.0" layoutY="51.0" prefHeight="487.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="41.0">
                      <children>
                         <Label fx:id="inductorName" layoutX="14.0" layoutY="14.0" text="Inductor Name" />
                         <Label fx:id="inductorVoltage" layoutX="14.0" layoutY="54.0" text="Voltage: 0V" />
@@ -130,6 +130,15 @@
                         <Label fx:id="inductorInductance" layoutX="14.0" layoutY="118.0" text="Inductance: 0 H" />
                         <Button layoutX="22.0" layoutY="186.0" mnemonicParsing="false" onAction="#updateInductance" prefHeight="25.0" prefWidth="149.0" text="Update Inductance" />
                         <TextField fx:id="inductorInductanceField" layoutX="22.0" layoutY="161.0" />
+                     </children>
+                  </Pane>
+                  <Pane fx:id="powerSupplyPane" layoutX="21.0" layoutY="51.0" prefHeight="487.0" prefWidth="200.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="41.0">
+                     <children>
+                        <Label fx:id="powerSupplyName" layoutX="14.0" layoutY="14.0" text="Power Supply Name" />
+                        <Label fx:id="powerSupplyVoltage" layoutX="14.0" layoutY="54.0" text="Voltage: 0V" />
+                        <Label fx:id="powerSupplyCurrent" layoutX="14.0" layoutY="88.0" text="Current: 0A" />
+                        <Button layoutX="22.0" layoutY="186.0" mnemonicParsing="false" onAction="#updateVoltage" prefHeight="25.0" prefWidth="149.0" text="Update Voltage" />
+                        <TextField fx:id="powerSupplyVoltageField" layoutX="22.0" layoutY="161.0" />
                      </children>
                   </Pane>
           </children>

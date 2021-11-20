@@ -62,6 +62,17 @@ public class Controller {
     private TextField capacitorCapacitanceField;
 
     @FXML
+    private Pane powerSupplyPane;
+    @FXML
+    private Label powerSupplyName;
+    @FXML
+    private Label powerSupplyVoltage;
+    @FXML
+    private Label powerSupplyCurrent;
+    @FXML
+    private TextField powerSupplyVoltageField;
+
+    @FXML
     private ListView<String> componentsList;
 
     @FXML
@@ -232,6 +243,7 @@ public class Controller {
         resistorPane.setVisible(false);
         capacitorPane.setVisible(true);
         inductorPane.setVisible(false);
+        powerSupplyPane.setVisible(false);
         capacitorName.setText("Component: " + c.getName());
         capacitorVoltage.setText(String.format("Voltage: %.3fV", c.getVoltage()));
         capacitorCharge.setText(String.format("Charge: %.3fC", c.getCharge()));
@@ -249,6 +261,7 @@ public class Controller {
         resistorPane.setVisible(true);
         capacitorPane.setVisible(false);
         inductorPane.setVisible(false);
+        powerSupplyPane.setVisible(false);
         resistorName.setText("Component: " + r.getName());
         resistorVoltage.setText(String.format("Voltage: %.3fV", r.getVoltage()));
         resistorCurrent.setText(String.format("Current: %.3fA", r.getCurrent()));
@@ -265,6 +278,7 @@ public class Controller {
         resistorPane.setVisible(false);
         capacitorPane.setVisible(false);
         inductorPane.setVisible(true);
+        powerSupplyPane.setVisible(false);
         inductorName.setText("Component: " + r.getName());
         inductorVoltage.setText(String.format("Voltage: %.3fV", r.getVoltage()));
         inductorCurrent.setText(String.format("Current: %.3fA", r.getCurrent()));
@@ -277,13 +291,20 @@ public class Controller {
         currSelected = elements_screen.get(currSelected.getName()).getCircuitElement();
     }
 
-    private void setPowerSupply(PowerSupply p) {
-        resistorPane.setVisible(true);
+    public void setPowerSupply(PowerSupply r) {
+        resistorPane.setVisible(false);
         capacitorPane.setVisible(false);
         inductorPane.setVisible(false);
-        resistorName.setText("Component: " + p.getName());
-        resistorVoltage.setText(String.format("Voltage: %.3fV", p.getVoltage()));
-        resistorCurrent.setText(String.format("Current: %.3fA", p.getCurrent()));
+        powerSupplyPane.setVisible(true);
+        powerSupplyName.setText("Component: " + r.getName());
+        powerSupplyVoltage.setText(String.format("Voltage: %.3fV", r.getVoltage()));
+        powerSupplyCurrent.setText(String.format("Current: %.3fA", r.getCurrent()));
+    }
+
+    public void updateVoltage() {
+        if(play) return;
+        elements_screen.get(currSelected.getName()).setCircuitElement(new PowerSupply(currSelected.getName(), Double.parseDouble(powerSupplyVoltageField.getText())));
+        currSelected = elements_screen.get(currSelected.getName()).getCircuitElement();
     }
 
     private Circuit createCircuit() {
