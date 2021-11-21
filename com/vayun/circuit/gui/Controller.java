@@ -1,17 +1,28 @@
 package com.vayun.circuit.gui;
 
+import com.sun.javafx.collections.ImmutableObservableList;
 import com.vayun.circuit.Circuit;
+import com.vayun.circuit.data.DataColumn;
 import com.vayun.circuit.element.*;
 import javafx.animation.AnimationTimer;
+import javafx.beans.property.ReadOnlyDoubleWrapper;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -82,6 +93,20 @@ public class Controller {
     private Pane circuitCanvas;
 
     @FXML
+    private ChoiceBox<DataColumn> xOption;
+    @FXML
+    private ChoiceBox<DataColumn> yOption;
+    @FXML
+    private TableView<HashMap<String, Double>> table;
+    @FXML
+    private TableColumn<HashMap<String, Double>, String> tableX;
+    @FXML
+    private TableColumn<HashMap<String, Double>, String> tableY;
+
+    private DataColumn time = new DataColumn("time");
+    private HashMap<String, DataColumn> dataTable = new HashMap<>();
+
+    @FXML
     private VBox mainPane;
 
     private double t = 0;
@@ -137,6 +162,21 @@ public class Controller {
             }
         });
 
+        dataTable.put("time", time);
+        xOption.setItems(FXCollections.observableArrayList(time));
+        yOption.setItems(FXCollections.observableArrayList(time));
+
+        xOption.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, number2) -> {
+            DataColumn column = xOption.getItems().get(number2.intValue());
+            tableX.setCellValueFactory((x)-> new ReadOnlyStringWrapper(String.format("%.3f", x.getValue().get(column.getName()))));
+        });
+
+        yOption.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, number2) -> {
+            DataColumn column = yOption.getItems().get(number2.intValue());
+            tableY.setCellValueFactory((x)-> new ReadOnlyStringWrapper(String.format("%.3f", x.getValue().get(column.getName()))));
+        });
+
+
         drawCircuit();
         handle();
         leftstatus.setText("t = 0.00 seconds");
@@ -153,8 +193,15 @@ public class Controller {
                 e.printStackTrace();
             }
             circuit.update(0.02);
+            time.addPoint(t);
             t += 0.02;
             leftstatus.setText(String.format("t = %.2f seconds", t));
+            List<HashMap<String, Double>> dataRows = new ArrayList<>();
+            for(int i=0;i<time.getValues().size();i++) {
+                dataRows.add(new HashMap<>());
+            }
+            time.addToDataRows(dataRows);
+            table.setItems(FXCollections.observableList(dataRows));
         }
 
         if (currSelected instanceof Resistor) {
