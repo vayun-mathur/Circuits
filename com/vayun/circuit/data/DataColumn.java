@@ -3,25 +3,26 @@ package com.vayun.circuit.data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.SortedMap;
 
 public class DataColumn {
 
     private final String name;
-    private final List<Double> values = new ArrayList<>();
+    private final HashMap<Double, Double> values = new HashMap<>();
 
     public DataColumn(String name) {
         this.name = name;
     }
 
-    public void addPoint(double d) {
-        values.add(d);
+    public void addPoint(double t, double v) {
+        values.put(t, v);
     }
 
     public String getName() {
         return name;
     }
 
-    public List<Double> getValues() {
+    public HashMap<Double, Double> getValues() {
         return values;
     }
 
@@ -29,8 +30,8 @@ public class DataColumn {
         return name;
     }
 
-    public void addToDataRows(List<HashMap<String, Double>> dataRows) {
-        for(int i=0;i<dataRows.size();i++) {
+    public void addToDataRows(SortedMap<Double, HashMap<String, Double>> dataRows) {
+        for(Double i: values.keySet()) {
             dataRows.get(i).put(name, values.get(i));
         }
     }

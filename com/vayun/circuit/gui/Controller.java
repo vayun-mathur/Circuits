@@ -3,6 +3,7 @@ package com.vayun.circuit.gui;
 import com.sun.javafx.collections.ImmutableObservableList;
 import com.vayun.circuit.Circuit;
 import com.vayun.circuit.data.DataColumn;
+import com.vayun.circuit.data.DataTable;
 import com.vayun.circuit.element.*;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
@@ -21,6 +22,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,8 +105,7 @@ public class Controller {
     @FXML
     private TableColumn<HashMap<String, Double>, String> tableY;
 
-    private DataColumn time = new DataColumn("time");
-    private HashMap<String, DataColumn> dataTable = new HashMap<>();
+    private DataTable dtable = new DataTable();
 
     @FXML
     private VBox mainPane;
@@ -162,9 +163,8 @@ public class Controller {
             }
         });
 
-        dataTable.put("time", time);
-        xOption.setItems(FXCollections.observableArrayList(time));
-        yOption.setItems(FXCollections.observableArrayList(time));
+        xOption.setItems(dtable.columnsList());
+        yOption.setItems(dtable.columnsList());
 
         xOption.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, number2) -> {
             DataColumn column = xOption.getItems().get(number2.intValue());
@@ -193,15 +193,10 @@ public class Controller {
                 e.printStackTrace();
             }
             circuit.update(0.02);
-            time.addPoint(t);
+            dtable.update(t);
             t += 0.02;
             leftstatus.setText(String.format("t = %.2f seconds", t));
-            List<HashMap<String, Double>> dataRows = new ArrayList<>();
-            for(int i=0;i<time.getValues().size();i++) {
-                dataRows.add(new HashMap<>());
-            }
-            time.addToDataRows(dataRows);
-            table.setItems(FXCollections.observableList(dataRows));
+            table.setItems(dtable.getItems());
         }
 
         if (currSelected instanceof Resistor) {
