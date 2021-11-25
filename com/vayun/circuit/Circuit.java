@@ -1,5 +1,6 @@
 package com.vayun.circuit;
 
+import com.vayun.circuit.data.DataTable;
 import com.vayun.circuit.element.CircuitElement;
 import com.vayun.circuit.element.PowerSupply;
 
@@ -32,9 +33,9 @@ public class Circuit {
         this.supply.analyseCurrent(this.circuit.getCurrent());
     }
 
-    public void update(double dt) {
-        this.circuit.update(dt);
-        this.supply.update(dt);
+    public void update(double dt, double t, DataTable dtable) {
+        this.circuit.update(dt, t, dtable);
+        this.supply.update(dt, t, dtable);
     }
 
     public CircuitElement getElement(String name) {

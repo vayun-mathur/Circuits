@@ -1,6 +1,7 @@
 package com.vayun.circuit.element;
 
 import com.vayun.circuit.Circuit;
+import com.vayun.circuit.data.DataTable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +15,7 @@ public class ParallelResistorCapacitorInductor extends ResistorCapacitorInductor
         super("", inverse(rc1.getResistance(), rc2.getResistance()), rc1.getCapacitance() + rc2.getCapacitance(), inverse(rc1.getInductance(), rc2.getInductance()));
         this.rc1 = rc1;
         this.rc2 = rc2;
-        this.setCharge(0);
+        this.setCharge(rc1.getCharge()+rc2.getCharge());
     }
 
     public void analyseVoltage(double voltage) throws Exception {
@@ -31,9 +32,9 @@ public class ParallelResistorCapacitorInductor extends ResistorCapacitorInductor
     }
 
     @Override
-    public void update(double dt) {
-        rc1.update(dt);
-        rc2.update(dt);
+    public void update(double dt, double t, DataTable dtable) {
+        rc1.update(dt, t, dtable);
+        rc2.update(dt, t, dtable);
         this.setCharge(rc1.getCharge()+rc2.getCharge());
     }
 

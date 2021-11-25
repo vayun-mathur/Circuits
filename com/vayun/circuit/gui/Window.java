@@ -18,8 +18,8 @@ public class Window extends Application {
         stage.setScene(scene);
         stage.sizeToScene();
         stage.show();
-        stage.setMinWidth(stage.getWidth());
-        stage.setMinHeight(stage.getHeight());
+        //stage.setMinWidth(stage.getWidth());
+        //stage.setMinHeight(stage.getHeight());
     }
 
     public static void run() {

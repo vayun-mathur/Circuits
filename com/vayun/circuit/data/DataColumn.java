@@ -1,8 +1,6 @@
 package com.vayun.circuit.data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.SortedMap;
 
 public class DataColumn {

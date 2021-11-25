@@ -1,6 +1,7 @@
 package com.vayun.circuit.element;
 
 import com.vayun.circuit.Circuit;
+import com.vayun.circuit.data.DataTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +44,10 @@ public class ResistorCapacitorInductor extends CircuitElement {
     double dt = 0.02;
 
     @Override
-    public void update(double dt) {
+    public void update(double dt, double t, DataTable dtable) {
         if(capacitance != 0) charge += getCurrent() * dt;
         this.dt = dt;
+        super.update(dt, t, dtable);
     }
 
     public double getResistance() {

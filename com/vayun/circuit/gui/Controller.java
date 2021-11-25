@@ -1,31 +1,24 @@
 package com.vayun.circuit.gui;
 
-import com.sun.javafx.collections.ImmutableObservableList;
 import com.vayun.circuit.Circuit;
 import com.vayun.circuit.data.DataColumn;
 import com.vayun.circuit.data.DataTable;
 import com.vayun.circuit.element.*;
 import javafx.animation.AnimationTimer;
-import javafx.beans.property.ReadOnlyDoubleWrapper;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.util.StringConverter;
 
-import javax.xml.crypto.Data;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -104,8 +97,10 @@ public class Controller {
     private TableColumn<HashMap<String, Double>, String> tableX;
     @FXML
     private TableColumn<HashMap<String, Double>, String> tableY;
+    @FXML
+    private ScatterChart<Double, Double> graph;
 
-    private DataTable dtable = new DataTable();
+    private final DataTable dtable = new DataTable();
 
     @FXML
     private VBox mainPane;
@@ -163,17 +158,18 @@ public class Controller {
             }
         });
 
-        xOption.setItems(dtable.columnsList());
-        yOption.setItems(dtable.columnsList());
 
         xOption.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, number2) -> {
+            if(number2.intValue() == -1) return;
             DataColumn column = xOption.getItems().get(number2.intValue());
             tableX.setCellValueFactory((x)-> new ReadOnlyStringWrapper(String.format("%.3f", x.getValue().get(column.getName()))));
         });
 
         yOption.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, number2) -> {
+            if(number2.intValue() == -1) return;
             DataColumn column = yOption.getItems().get(number2.intValue());
             tableY.setCellValueFactory((x)-> new ReadOnlyStringWrapper(String.format("%.3f", x.getValue().get(column.getName()))));
+            updateGraph(column);
         });
 
 
@@ -184,6 +180,16 @@ public class Controller {
         timer.start();
     }
 
+    public void updateGraph(DataColumn yCol) {
+        XYChart.Series<Double, Double> series = new XYChart.Series<>();
+        System.out.println(yCol);
+        series.setName(yCol.getName());
+        for(Map.Entry<Double, Double> e: xOption.getValue().getValues().entrySet()){
+            series.getData().add(new XYChart.Data<>(e.getValue(), yCol.getValues().get(e.getKey())));
+        }
+        graph.setData(FXCollections.observableList(List.of(series)));
+    }
+
     public void handle() {
 
         if (play) {
@@ -192,8 +198,10 @@ public class Controller {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            circuit.update(0.02);
+            circuit.update(0.02, t, dtable);
             dtable.update(t);
+            xOption.setItems(dtable.columnsList());
+            yOption.setItems(dtable.columnsList());
             t += 0.02;
             leftstatus.setText(String.format("t = %.2f seconds", t));
             table.setItems(dtable.getItems());

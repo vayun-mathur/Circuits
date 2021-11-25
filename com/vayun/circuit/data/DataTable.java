@@ -32,4 +32,9 @@ public class DataTable {
     public ObservableList<DataColumn> columnsList() {
         return FXCollections.observableList(new ArrayList<>(columns.values()));
     }
+
+    public void addPoint(double time, String column, double value) {
+        columns.putIfAbsent(column, new DataColumn(column));
+        columns.get(column).addPoint(time, value);
+    }
 }

@@ -1,6 +1,7 @@
 package com.vayun.circuit.element;
 
 import com.vayun.circuit.Circuit;
+import com.vayun.circuit.data.DataTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +21,6 @@ public class PowerSupply extends CircuitElement {
     @Override
     public void analyseCurrent(double current) {
         setCurrent(current);
-    }
-
-    @Override
-    public void update(double dt) {
-
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.vayun.circuit.element;
 
 import com.vayun.circuit.Circuit;
+import com.vayun.circuit.data.DataTable;
 
 import java.util.List;
 
@@ -17,7 +18,10 @@ public abstract class CircuitElement {
 
     public abstract void analyseVoltage(double voltage) throws Exception;
     public abstract void analyseCurrent(double current) throws Exception;
-    public abstract void update(double dt);
+    public void update(double dt, double t, DataTable dtable) {
+        dtable.addPoint(t, name+":V", getVoltage());
+        dtable.addPoint(t, name+":I", getCurrent());
+    }
 
     public double getVoltage() {
         return voltage;
