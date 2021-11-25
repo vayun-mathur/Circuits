@@ -33,7 +33,6 @@
 -->
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.Button?>
@@ -184,7 +183,7 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="table" layoutX="14.0" layoutY="116.0" prefHeight="469.0" prefWidth="228.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="116.0">
+                        <TableView fx:id="table" layoutX="14.0" layoutY="116.0" prefHeight="433.0" prefWidth="228.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="116.0">
                           <columns>
                             <TableColumn fx:id="tableX" prefWidth="75.0" text="C1" />
                             <TableColumn fx:id="tableY" prefWidth="75.0" text="C2" />
@@ -205,6 +204,7 @@
                             <NumberAxis side="LEFT" />
                           </yAxis>
                         </ScatterChart>
+                        <Button layoutX="14.0" layoutY="560.0" mnemonicParsing="false" onAction="#updateGraph" prefHeight="25.0" prefWidth="228.0" text="Graph" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="560.0" />
                      </children>
                   </AnchorPane>
               </content>

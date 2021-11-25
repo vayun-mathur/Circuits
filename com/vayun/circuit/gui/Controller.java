@@ -169,7 +169,6 @@ public class Controller {
             if(number2.intValue() == -1) return;
             DataColumn column = yOption.getItems().get(number2.intValue());
             tableY.setCellValueFactory((x)-> new ReadOnlyStringWrapper(String.format("%.3f", x.getValue().get(column.getName()))));
-            updateGraph(column);
         });
 
 
@@ -180,12 +179,11 @@ public class Controller {
         timer.start();
     }
 
-    public void updateGraph(DataColumn yCol) {
+    public void updateGraph() {
         XYChart.Series<Double, Double> series = new XYChart.Series<>();
-        System.out.println(yCol);
-        series.setName(yCol.getName());
+        series.setName(yOption.getValue().getName());
         for(Map.Entry<Double, Double> e: xOption.getValue().getValues().entrySet()){
-            series.getData().add(new XYChart.Data<>(e.getValue(), yCol.getValues().get(e.getKey())));
+            series.getData().add(new XYChart.Data<>(e.getValue(), yOption.getValue().getValues().get(e.getKey())));
         }
         graph.setData(FXCollections.observableList(List.of(series)));
     }
