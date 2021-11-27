@@ -19,8 +19,8 @@ public abstract class CircuitElement {
     public abstract void analyseVoltage(double voltage) throws Exception;
     public abstract void analyseCurrent(double current) throws Exception;
     public void update(double dt, double t, DataTable dtable) {
-        dtable.addPoint(t, name+":V", getVoltage());
-        dtable.addPoint(t, name+":I", getCurrent());
+        dtable.addPoint(t, name+":Voltage", getVoltage());
+        dtable.addPoint(t, name+":Current", getCurrent());
     }
 
     public double getVoltage() {

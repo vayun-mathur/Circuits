@@ -9,7 +9,7 @@ public class Capacitor extends ResistorCapacitorInductor {
 
     @Override
     public void update(double dt, double t, DataTable dtable) {
-        dtable.addPoint(t, getName()+":Q", getCharge());
+        dtable.addPoint(t, getName()+":Charge", getCharge());
         super.update(dt, t, dtable);
     }
 }
