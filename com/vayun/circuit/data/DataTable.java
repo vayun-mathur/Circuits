@@ -7,10 +7,10 @@ import java.util.*;
 
 public class DataTable {
     private final HashMap<String, DataColumn> columns = new HashMap<>();
-    private final DataColumn time = new DataColumn("time");
+    private final DataColumn time = new DataColumn("Time");
 
     public DataTable() {
-        columns.put("time", time);
+        columns.put("Time", time);
     }
 
     public void update(double t) {
@@ -36,5 +36,17 @@ public class DataTable {
     public void addPoint(double time, String column, double value) {
         columns.putIfAbsent(column, new DataColumn(column));
         columns.get(column).addPoint(time, value);
+    }
+
+    public List<DataPoint> getPoints(String x, String y) {
+        DataColumn xCol = columns.get(x);
+        DataColumn yCol = columns.get(y);
+        List<DataPoint> points = new ArrayList<>();
+        Set<Double> t = new HashSet<>(xCol.getValues().keySet());
+        t.retainAll(yCol.getValues().keySet());
+        for(Double d: t) {
+            points.add(new DataPoint(xCol.getValues().get(d), yCol.getValues().get(d)));
+        }
+        return points;
     }
 }

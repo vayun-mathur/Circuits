@@ -196,7 +196,7 @@
                         <ChoiceBox layoutX="14.0" layoutY="76.0" prefHeight="25.0" prefWidth="114.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="75.0" fx:id="xOption" />
                         <Label layoutX="15.0" layoutY="42.0" text="x-axis" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="45.0" />
                         <Label layoutX="128.0" layoutY="42.0" text="y-axis" AnchorPane.leftAnchor="128.0" AnchorPane.topAnchor="45.0" />
-                        <ScatterChart fx:id="graph" layoutX="265.0" layoutY="13.0" prefHeight="572.0" prefWidth="612.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="75.0">
+                        <ScatterChart fx:id="graph" layoutX="265.0" layoutY="13.0" prefHeight="473.0" prefWidth="605.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="75.0">
                           <xAxis>
                             <NumberAxis side="BOTTOM" />
                           </xAxis>
@@ -205,6 +205,8 @@
                           </yAxis>
                         </ScatterChart>
                         <Button layoutX="14.0" layoutY="560.0" mnemonicParsing="false" onAction="#updateGraph" prefHeight="25.0" prefWidth="228.0" text="Graph" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="560.0" />
+                        <Button layoutX="578.0" layoutY="560.0" mnemonicParsing="false" onAction="#regression" text="Regression Analysis" />
+                        <ChoiceBox fx:id="regressionType" layoutX="428.0" layoutY="560.0" prefWidth="150.0" />
                      </children>
                   </AnchorPane>
               </content>

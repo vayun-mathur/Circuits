@@ -2,7 +2,9 @@ package com.vayun.circuit.gui;
 
 import com.vayun.circuit.Circuit;
 import com.vayun.circuit.data.DataColumn;
+import com.vayun.circuit.data.DataPoint;
 import com.vayun.circuit.data.DataTable;
+import com.vayun.circuit.data.equation.Equation;
 import com.vayun.circuit.element.*;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -16,6 +18,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +106,9 @@ public class Controller {
     private final DataTable dtable = new DataTable();
 
     @FXML
+    private ChoiceBox<String> regressionType;
+
+    @FXML
     private VBox mainPane;
 
     private double t = 0;
@@ -171,6 +177,8 @@ public class Controller {
             tableY.setCellValueFactory((x)-> new ReadOnlyStringWrapper(String.format("%.3f", x.getValue().get(column.getName()))));
         });
 
+        regressionType.setItems(FXCollections.observableArrayList("Linear")); //TODO: "Quadratic", "Inverse", "Inverse Square"
+
 
         drawCircuit();
         handle();
@@ -186,6 +194,22 @@ public class Controller {
             series.getData().add(new XYChart.Data<>(e.getValue(), yOption.getValue().getValues().get(e.getKey())));
         }
         graph.setData(FXCollections.observableList(List.of(series)));
+    }
+
+    public void regression() {
+        List<DataPoint> points = dtable.getPoints(xOption.getValue().getName(), yOption.getValue().getName());
+        Equation e = null;
+        switch(regressionType.getValue()){
+            case "Linear":
+                e = Equation.linearRegression(points);
+                break;
+        }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Regression Analysis");
+        alert.setHeaderText("Equation:");
+        alert.setContentText(e.toString());
+
+        alert.showAndWait();
     }
 
     public void handle() {
