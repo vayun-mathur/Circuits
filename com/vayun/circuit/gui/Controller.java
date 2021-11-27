@@ -177,7 +177,7 @@ public class Controller {
             tableY.setCellValueFactory((x)-> new ReadOnlyStringWrapper(String.format("%.3f", x.getValue().get(column.getName()))));
         });
 
-        regressionType.setItems(FXCollections.observableArrayList("Linear")); //TODO: "Quadratic", "Inverse", "Inverse Square"
+        regressionType.setItems(FXCollections.observableArrayList("Linear", "Inverse")); //TODO: "Inverse Square"
 
 
         drawCircuit();
@@ -198,15 +198,15 @@ public class Controller {
 
     public void regression() {
         List<DataPoint> points = dtable.getPoints(xOption.getValue().getName(), yOption.getValue().getName());
-        Equation e = null;
-        switch(regressionType.getValue()){
-            case "Linear":
-                e = Equation.linearRegression(points);
-                break;
-        }
+        Equation e = switch (regressionType.getValue()) {
+            case "Linear" -> Equation.linearRegression(points);
+            case "Inverse" -> Equation.inverseRegression(points);
+            default -> null;
+        };
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Regression Analysis");
         alert.setHeaderText("Equation:");
+        assert e != null;
         alert.setContentText(e.toString());
 
         alert.showAndWait();
