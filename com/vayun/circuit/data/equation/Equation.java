@@ -12,12 +12,12 @@ public abstract class Equation {
         List<Double> xy = points.stream().map(p->p.x*p.y).collect(Collectors.toList());
         double xavg = average(x), yavg = average(y), xyavg = average(xy);
         double x2avg = average(x.stream().map(n->n*n).collect(Collectors.toList()));
-        double y2avg = average(x.stream().map(n->n*n).collect(Collectors.toList()));
+        double y2avg = average(y.stream().map(n->n*n).collect(Collectors.toList()));
 
         double r = (xyavg - xavg*yavg)/Math.sqrt((x2avg-xavg*xavg)*(y2avg-yavg*yavg));
         double b = r * standardDeviation(y)/standardDeviation(x);
         double a = average(y) - (b * average(x));
-        return new double[]{a, b, r};
+        return new double[]{a, b, r*r};
     }
 
     public static Equation linearRegression(List<DataPoint> points) {
@@ -49,29 +49,29 @@ public abstract class Equation {
 }
 
 class LinearEquation extends Equation {
-    private double a, b, r;
+    private final double a, b, r2;
 
-    public LinearEquation(double a, double b, double r) {
+    public LinearEquation(double a, double b, double r2) {
         this.a = a;
         this.b = b;
-        this.r = r;
+        this.r2 = r2;
     }
 
     public String toString() {
-        return "y = " + a + " + " + b + "x: r="+r;
+        return "y = " + a + " + " + b + "x, r²="+r2;
     }
 }
 
 class InverseEquation extends Equation {
-    private double a, b, r;
+    private final double a, b, r2;
 
-    public InverseEquation(double a, double b, double r) {
+    public InverseEquation(double a, double b, double r2) {
         this.a = a;
         this.b = b;
-        this.r = r;
+        this.r2 = r2;
     }
 
     public String toString() {
-        return "y = " + a + " + " + b + " * 1/x: r="+r;
+        return "y = " + a + " + " + b + " * 1/x, r²="+r2;
     }
 }
