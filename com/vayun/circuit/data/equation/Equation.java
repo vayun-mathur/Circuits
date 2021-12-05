@@ -25,6 +25,16 @@ public abstract class Equation {
         return new LinearEquation(round(abr[0]), round(abr[1]), round(abr[2]));
     }
 
+    public static Equation exponentialRegression(List<DataPoint> points) {
+        double[] abr = linearParameters(points.stream().filter(p->p.x!=0).map(p->new DataPoint(p.x, Math.log(p.y))).collect(Collectors.toList()));
+        return new ExponentialEquation(round(Math.exp(abr[0])), round(abr[1]), round(abr[2]));
+    }
+
+    public static Equation inverseSquareRegression(List<DataPoint> points) {
+        double[] abr = linearParameters(points.stream().filter(p->p.x!=0).map(p->new DataPoint(1/(p.x * p.x), p.y)).collect(Collectors.toList()));
+        return new InverseSquareEquation(round(abr[0]), round(abr[1]), round(abr[2]));
+    }
+
     public static Equation inverseRegression(List<DataPoint> points) {
         double[] abr = linearParameters(points.stream().filter(p->p.x!=0).map(p->new DataPoint(1/p.x, p.y)).collect(Collectors.toList()));
         return new InverseEquation(round(abr[0]), round(abr[1]), round(abr[2]));
@@ -59,6 +69,34 @@ class LinearEquation extends Equation {
 
     public String toString() {
         return "y = " + a + " + " + b + "x, r²="+r2;
+    }
+}
+
+class ExponentialEquation extends Equation {
+    private final double a, b, r2;
+
+    public ExponentialEquation(double a, double b, double r2) {
+        this.a = a;
+        this.b = b;
+        this.r2 = r2;
+    }
+
+    public String toString() {
+        return "y = " + a + " * e^(" + b + "x), r²="+r2;
+    }
+}
+
+class InverseSquareEquation extends Equation {
+    private final double a, b, r2;
+
+    public InverseSquareEquation(double a, double b, double r2) {
+        this.a = a;
+        this.b = b;
+        this.r2 = r2;
+    }
+
+    public String toString() {
+        return "y = " + a + " + " + b + " * 1/x², r²="+r2;
     }
 }
 

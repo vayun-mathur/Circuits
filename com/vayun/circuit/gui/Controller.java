@@ -177,7 +177,7 @@ public class Controller {
             tableY.setCellValueFactory((x)-> new ReadOnlyStringWrapper(String.format("%.3f", x.getValue().get(column.getName()))));
         });
 
-        regressionType.setItems(FXCollections.observableArrayList("Linear", "Inverse")); //TODO: "Inverse Square"
+        regressionType.setItems(FXCollections.observableArrayList("Linear", "Exponential", "Inverse", "Inverse Square"));
 
 
         drawCircuit();
@@ -200,6 +200,8 @@ public class Controller {
         List<DataPoint> points = dtable.getPoints(xOption.getValue().getName(), yOption.getValue().getName());
         Equation e = switch (regressionType.getValue()) {
             case "Linear" -> Equation.linearRegression(points);
+            case "Exponential" -> Equation.exponentialRegression(points);
+            case "Inverse Square" -> Equation.inverseSquareRegression(points);
             case "Inverse" -> Equation.inverseRegression(points);
             default -> null;
         };
