@@ -149,6 +149,11 @@ public class Controller {
                 while (elements_screen.containsKey("R" + nNumber)) nNumber++;
                 addElement(new Resistor("R" + nNumber, 1));
             }
+            if (t.getCode() == KeyCode.D && !play) {
+                int nNumber = 0;
+                while (elements_screen.containsKey("D" + nNumber)) nNumber++;
+                addElement(new Diode("D" + nNumber));
+            }
             if (t.getCode() == KeyCode.I && !play) {
                 int nNumber = 0;
                 while (elements_screen.containsKey("I" + nNumber)) nNumber++;
