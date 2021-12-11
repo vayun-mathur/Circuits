@@ -45,7 +45,9 @@ public abstract class CircuitElement {
 
     public static double inverse(double x, double y) {
         if(x==0) return y;
+        if(x==Double.POSITIVE_INFINITY) return y;
         if(y==0) return x;
+        if(y==Double.POSITIVE_INFINITY) return x;
         return x*y/(x+y);
     }
 

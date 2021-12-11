@@ -48,6 +48,10 @@ public class ElementGUI extends StackPane {
             strokeColor = "#000000";
             fillColor = "#000000";
             radius = 2;
+        } else if (e instanceof Diode) {
+            strokeColor = "#aa88aa";
+            fillColor = "#aaaaaa";
+            radius = 20;
         } else if (e instanceof PowerSupply) {
             // Battery
             strokeColor = "#888888";

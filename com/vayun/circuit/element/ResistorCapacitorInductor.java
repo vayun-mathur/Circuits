@@ -8,14 +8,16 @@ import java.util.List;
 
 public class ResistorCapacitorInductor extends CircuitElement {
 
-    private final double resistance; // measured in ohms
+    private final double resistanceForward; // measured in ohms
+    private final double resistanceBackward; // measured in ohms
     private final double capacitance; // measured in farads
     private final double inductance; // measured in henries
     private double charge; // measured in coulombs
 
-    public ResistorCapacitorInductor(String name, double resistance, double capacitance, double inductance) {
+    public ResistorCapacitorInductor(String name, double resistanceForward, double resistanceBackward, double capacitance, double inductance) {
         super(name);
-        this.resistance = resistance;
+        this.resistanceForward = resistanceForward;
+        this.resistanceBackward = resistanceBackward;
         this.capacitance = capacitance;
         this.inductance = inductance;
     }
@@ -25,10 +27,13 @@ public class ResistorCapacitorInductor extends CircuitElement {
     public void analyseVoltage(double voltage) throws Exception {
         double old_current = this.getCurrent();
         this.setVoltage(voltage);
-
+        double resistance = resistanceForward;
         double vc = capacitance==0?0:charge / capacitance;
         double vr = (voltage - vc + inductance * old_current / dt) * (resistance * dt)/(resistance * dt + inductance);
         this.setCurrent(vr / resistance);
+        if(getCurrent()<0 && resistanceBackward==Double.POSITIVE_INFINITY) {
+            this.setCurrent(0);
+        }
     }
 
     @Override
@@ -36,6 +41,7 @@ public class ResistorCapacitorInductor extends CircuitElement {
         double old_current = this.getCurrent();
         this.setCurrent(current);
         double vi = inductance * (current-old_current)/dt;
+        double resistance = current>=0?resistanceForward:resistanceBackward;
         double vr = current * resistance;
         double vc = capacitance==0?0:charge / capacitance;
         this.setVoltage(vr + vc + vi);
@@ -50,8 +56,12 @@ public class ResistorCapacitorInductor extends CircuitElement {
         super.update(dt, t, dtable);
     }
 
-    public double getResistance() {
-        return resistance;
+    public double getResistanceForward() {
+        return resistanceForward;
+    }
+
+    public double getResistanceBackward() {
+        return resistanceBackward;
     }
 
     public double getCapacitance() {

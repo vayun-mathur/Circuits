@@ -12,7 +12,10 @@ public class SeriesResistorCapacitorInductor extends ResistorCapacitorInductor {
     private final ResistorCapacitorInductor rc1, rc2;
 
     public SeriesResistorCapacitorInductor(ResistorCapacitorInductor rc1, ResistorCapacitorInductor rc2) {
-        super("",rc1.getResistance()+rc2.getResistance(), inverse(rc1.getCapacitance(), rc2.getCapacitance()), rc1.getInductance()+rc2.getInductance());
+        super("",rc1.getResistanceForward()+rc2.getResistanceForward(),
+                rc1.getResistanceBackward()+rc2.getResistanceBackward(),
+                inverse(rc1.getCapacitance(), rc2.getCapacitance()),
+                rc1.getInductance()+rc2.getInductance());
         this.rc1 = rc1;
         this.rc2 = rc2;
         this.setCharge(Math.max(rc1.getCharge(), rc2.getCharge()));

@@ -4,7 +4,7 @@ import com.vayun.circuit.data.DataTable;
 
 public class Capacitor extends ResistorCapacitorInductor {
     public Capacitor(String name, double capacitance) {
-        super(name, 0, capacitance, 0);
+        super(name, 0, 0, capacitance, 0);
     }
 
     @Override

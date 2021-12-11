@@ -339,7 +339,7 @@ public class Controller {
         resistorName.setText("Component: " + r.getName());
         resistorVoltage.setText(String.format("Voltage: %.3fV", r.getVoltage()));
         resistorCurrent.setText(String.format("Current: %.3fA", r.getCurrent()));
-        resistorResistance.setText(String.format("Resistance: %.3f ohms", r.getResistance()));
+        resistorResistance.setText(String.format("Resistance: %.3f ohms", r.getResistanceForward()));
     }
 
     public void updateResistance() {

@@ -12,7 +12,10 @@ public class ParallelResistorCapacitorInductor extends ResistorCapacitorInductor
     private final ResistorCapacitorInductor rc1, rc2;
 
     public ParallelResistorCapacitorInductor(ResistorCapacitorInductor rc1, ResistorCapacitorInductor rc2) {
-        super("", inverse(rc1.getResistance(), rc2.getResistance()), rc1.getCapacitance() + rc2.getCapacitance(), inverse(rc1.getInductance(), rc2.getInductance()));
+        super("", inverse(rc1.getResistanceForward(), rc2.getResistanceForward()),
+                inverse(rc1.getResistanceBackward(), rc2.getResistanceBackward()),
+                rc1.getCapacitance() + rc2.getCapacitance(),
+                inverse(rc1.getInductance(), rc2.getInductance()));
         this.rc1 = rc1;
         this.rc2 = rc2;
         this.setCharge(rc1.getCharge()+rc2.getCharge());
